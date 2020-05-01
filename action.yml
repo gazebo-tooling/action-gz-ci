@@ -9,8 +9,12 @@ inputs:
     description: 'Dependencies to apt install'
     required: false
     default: ''
+  coverage:
+    description: 'True to run coverage and upload results to Codecov'
+    required: false
+    default: true
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.apt-dependencies }}
+    - ${{ inputs.apt-dependencies inputs.coverage }}
