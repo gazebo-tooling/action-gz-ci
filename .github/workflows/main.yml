@@ -1,4 +1,6 @@
-on: [push]
+name: Ubuntu Bionic CI
+
+on: [push, pull_request]
 
 jobs:
   bionic-ci:
