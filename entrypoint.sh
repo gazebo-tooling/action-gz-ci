@@ -3,8 +3,7 @@
 set -x
 
 APT_DEPENDENCIES=$1
-COVERAGE=$2
-CODECOV_TOKEN=$3
+CODECOV_TOKEN=$2
 
 cd $GITHUB_WORKSPACE
 
@@ -43,7 +42,7 @@ make
 export CTEST_OUTPUT_ON_FAILURE=1
 make test
 
-if [ "$COVERAGE" = true ] ; then
+if [ ! -z "$CODECOV_TOKEN" ] ; then
   make coverage VERBOSE=1
 
   curl -s https://codecov.io/bash > codecov.sh

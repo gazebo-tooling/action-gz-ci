@@ -9,14 +9,13 @@ inputs:
     description: 'Dependencies to apt install'
     required: false
     default: ''
-  coverage:
-    description: 'True to run coverage and upload results to Codecov'
+  codecov-token:
+    description: 'Token to upload to Codecov'
     required: false
-    default: true
+    default: ''
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
     - ${{ inputs.apt-dependencies }}
-    - ${{ inputs.coverage }}
-    - ${{ secrets.CODECOV_TOKEN }}
+    - ${{ inputs.codecov-token }}

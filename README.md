@@ -24,7 +24,10 @@ jobs:
         uses: ignition-tooling/ubuntu-bionic-ci-action@v1
         with:
           apt-dependencies: ''
+          codecov-token: ${{ secrets.CODECOV_TOKEN }}
 ```
 
-And be sure to put all apt-installable dependencies into `apt-dependencies`.
+Be sure to put all apt-installable dependencies into `apt-dependencies`.
+
+Create a secret on the repository with Codecov's token, called `CODECOV_TOKEN`.
 
