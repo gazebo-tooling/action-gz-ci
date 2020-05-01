@@ -19,3 +19,4 @@ runs:
   args:
     - ${{ inputs.apt-dependencies }}
     - ${{ inputs.coverage }}
+    - ${{ secrets.CODECOV_TOKEN }}
