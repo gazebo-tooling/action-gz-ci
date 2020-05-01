@@ -46,5 +46,5 @@ if [ "$COVERAGE" = true ] ; then
   make coverage VERBOSE=1
 
   # disable gcov output with `-X gcovout -X gcov`
-  run: bash <(curl -s https://codecov.io/bash) -X gcovout -X gcov
+  bash <(curl -s https://codecov.io/bash) -X gcovout -X gcov
 fi
