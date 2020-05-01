@@ -17,4 +17,5 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.apt-dependencies inputs.coverage }}
+    - ${{ inputs.apt-dependencies }}
+    - ${{ inputs.coverage }}
