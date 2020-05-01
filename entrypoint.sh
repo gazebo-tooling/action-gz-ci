@@ -40,8 +40,9 @@ apt -y install $APT_DEPENDENCIES
 mkdir build
 cd build
 
-if [ ! -z "$SCRIPT_BEFORE_MAKE" ] ; then
-  bash $SCRIPT_BEFORE_MAKE
+echo "SCRIPT_BEFORE_CMAKE"
+if [ ! -z "$SCRIPT_BEFORE_CMAKE" ] ; then
+  bash $SCRIPT_BEFORE_CMAKE
 fi
 
 if [ ! -z "$CODECOV_TOKEN" ] ; then
@@ -50,12 +51,14 @@ else
   cmake ..
 fi
 
+echo "SCRIPT_BETWEEN_CMAKE_MAKE"
 if [ ! -z "$SCRIPT_BETWEEN_CMAKE_MAKE" ] ; then
   bash $SCRIPT_BETWEEN_CMAKE_MAKE
 fi
 
 make
 
+echo "SCRIPT_AFTER_MAKE"
 if [ ! -z "$SCRIPT_AFTER_MAKE" ] ; then
   bash $SCRIPT_AFTER_MAKE
 fi
