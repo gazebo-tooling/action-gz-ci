@@ -4,6 +4,9 @@ set -x
 
 APT_DEPENDENCIES=$1
 CODECOV_TOKEN=$2
+SCRIPT_BEFORE_CMAKE=$3
+SCRIPT_BETWEEN_CMAKE_MAKE=$4
+SCRIPT_AFTER_MAKE=$5
 
 cd $GITHUB_WORKSPACE
 
@@ -36,8 +39,26 @@ apt -y install $APT_DEPENDENCIES
 
 mkdir build
 cd build
-cmake .. -DCMAKE_BUILD_TYPE=coverage
+
+if [ ! -z "$SCRIPT_BEFORE_MAKE" ] ; then
+  bash $SCRIPT_BEFORE_MAKE
+fi
+
+if [ ! -z "$CODECOV_TOKEN" ] ; then
+  cmake .. -DCMAKE_BUILD_TYPE=coverage
+else
+  cmake ..
+fi
+
+if [ ! -z "$SCRIPT_BETWEEN_CMAKE_MAKE" ] ; then
+  bash $SCRIPT_BETWEEN_CMAKE_MAKE
+fi
+
 make
+
+if [ ! -z "$SCRIPT_AFTER_MAKE" ] ; then
+  bash $SCRIPT_AFTER_MAKE
+fi
 
 export CTEST_OUTPUT_ON_FAILURE=1
 make test
