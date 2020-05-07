@@ -3,11 +3,12 @@
 set -x
 
 APT_DEPENDENCIES=$1
-CODECOV_TOKEN=$2
-SCRIPT_BEFORE_CMAKE=$3
-SCRIPT_BETWEEN_CMAKE_MAKE=$4
-SCRIPT_AFTER_MAKE=$5
-SCRIPT_AFTER_MAKE_TEST=$6
+SOURCE_DEPENDENCIES=$2
+CODECOV_TOKEN=$3
+SCRIPT_BEFORE_CMAKE=$4
+SCRIPT_BETWEEN_CMAKE_MAKE=$5
+SCRIPT_AFTER_MAKE=$6
+SCRIPT_AFTER_MAKE_TEST=$7
 
 cd $GITHUB_WORKSPACE
 
@@ -22,7 +23,10 @@ apt -y install \
   curl \
   g++-8 \
   git \
-  cppcheck
+  cppcheck \
+  python-pip
+
+pip install vcstool
 
 update-alternatives \
   --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 \
@@ -37,6 +41,23 @@ cd ..
 sh tools/code_check.sh
 
 apt -y install $APT_DEPENDENCIES
+
+echo "SOURCE_DEPENDENCIES"
+if [ ! -z "$SOURCE_DEPENDENCIES" ] ; then
+  cat $SOURCE_DEPENDENCIES
+  mkdir deps
+  cd deps
+  vcs import < $SOURCE_DEPENDENCIES
+  for REPO in */ ; do
+    cd $REPO
+    mkdir build
+    cd build
+    cmake .. -DBUILD_TESTING=false
+    make -j4 install
+    cd ../..
+  done
+  cd ..
+fi
 
 mkdir build
 cd build

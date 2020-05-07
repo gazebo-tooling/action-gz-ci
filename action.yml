@@ -9,6 +9,10 @@ inputs:
     description: 'Dependencies to apt install'
     required: false
     default: ''
+  source-dependencies:
+    description: 'Yaml file containing dependencies to be downloaded with Vcstool and installed from source. Remember to add extra apt dependencies above.'
+    required: false
+    default: ''
   codecov-token:
     description: 'Token to upload to Codecov'
     required: false
@@ -34,6 +38,7 @@ runs:
   image: 'Dockerfile'
   args:
     - ${{ inputs.apt-dependencies }}
+    - ${{ inputs.source-dependencies }}
     - ${{ inputs.codecov-token }}
     - ${{ inputs.script-before-cmake }}
     - ${{ inputs.script-between-cmake-make }}
