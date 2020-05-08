@@ -28,6 +28,7 @@ jobs:
           script-before-cmake: before_cmake.sh
           script-between-cmake-make: between_cmake_make.sh
           script-after-make: after_make.sh
+          script-after-make-test: after_make_test.sh
 ```
 
 Be sure to put all apt-installable dependencies into `apt-dependencies`.
