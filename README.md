@@ -24,6 +24,7 @@ jobs:
         uses: ignition-tooling/ubuntu-bionic-ci-action@v1
         with:
           apt-dependencies: ''
+          source-dependencies: '../.github/ci-bionic/deps.yaml'
           codecov-token: ${{ secrets.CODECOV_TOKEN }}
           script-before-cmake: before_cmake.sh
           script-between-cmake-make: between_cmake_make.sh
@@ -32,6 +33,11 @@ jobs:
 ```
 
 Be sure to put all apt-installable dependencies into `apt-dependencies`.
+
+If you need to install dependencies from source, add a Vcstool yaml file.
+Dependencies will be built using `cmake ..; make; make install`. Be sure
+to add the apt dependencies of dependencies build from source to
+`apt-dependencies`.
 
 Create a secret on the repository with Codecov's token, called `CODECOV_TOKEN`.
 
