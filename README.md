@@ -25,9 +25,14 @@ jobs:
         with:
           apt-dependencies: ''
           codecov-token: ${{ secrets.CODECOV_TOKEN }}
+          script-before-cmake: before_cmake.sh
+          script-between-cmake-make: between_cmake_make.sh
+          script-after-make: after_make.sh
+          script-after-make-test: after_make_test.sh
 ```
 
 Be sure to put all apt-installable dependencies into `apt-dependencies`.
 
 Create a secret on the repository with Codecov's token, called `CODECOV_TOKEN`.
 
+The `script-`s are optional hooks that you can run at specific times of the build.

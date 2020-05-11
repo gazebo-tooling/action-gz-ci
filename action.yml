@@ -13,9 +13,29 @@ inputs:
     description: 'Token to upload to Codecov'
     required: false
     default: ''
+  script-before-cmake:
+    description: 'Bash script to be run before cmake inside the build folder'
+    required: false
+    default: ''
+  script-between-cmake-make:
+    description: 'Bash script to be run after cmake and before make inside the build folder'
+    required: false
+    default: ''
+  script-after-make:
+    description: 'Bash script to be run after make and before make test inside the build folder'
+    required: false
+    default: ''
+  script-after-make-test:
+    description: 'Bash script to be run after make test inside the build folder'
+    required: false
+    default: ''
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
     - ${{ inputs.apt-dependencies }}
     - ${{ inputs.codecov-token }}
+    - ${{ inputs.script-before-cmake }}
+    - ${{ inputs.script-between-cmake-make }}
+    - ${{ inputs.script-after-make }}
+    - ${{ inputs.script-after-make-test }}
