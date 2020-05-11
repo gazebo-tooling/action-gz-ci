@@ -24,7 +24,7 @@ apt -y install \
   g++-8 \
   git \
   cppcheck \
-  python-pip
+  python3-pip
 
 pip install -U pip vcstool colcon-common-extensions
 
