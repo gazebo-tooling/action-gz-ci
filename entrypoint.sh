@@ -27,6 +27,7 @@ apt -y install \
   python-pip
 
 pip install vcstool
+pip install -U colcon-common-extensions
 
 update-alternatives \
   --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 \
@@ -45,17 +46,12 @@ apt -y install $APT_DEPENDENCIES
 echo "SOURCE_DEPENDENCIES"
 if [ ! -z "$SOURCE_DEPENDENCIES" ] ; then
   cat $SOURCE_DEPENDENCIES
-  mkdir deps
-  cd deps
+  mkdir deps/src
+  cd deps/src
   vcs import < $SOURCE_DEPENDENCIES
-  for REPO in */ ; do
-    cd $REPO
-    mkdir build
-    cd build
-    cmake .. -DBUILD_TESTING=false
-    make -j4 install
-    cd ../..
-  done
+  cd ..
+  colcon build --symlink-install --merge-install --cmake-args -DBUILD_TESTING=false
+  . install/setup.sh
   cd ..
 fi
 
