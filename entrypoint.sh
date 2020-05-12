@@ -3,12 +3,11 @@
 set -x
 
 APT_DEPENDENCIES=$1
-SOURCE_DEPENDENCIES=$2
-CODECOV_TOKEN=$3
-SCRIPT_BEFORE_CMAKE=$4
-SCRIPT_BETWEEN_CMAKE_MAKE=$5
-SCRIPT_AFTER_MAKE=$6
-SCRIPT_AFTER_MAKE_TEST=$7
+CODECOV_TOKEN=$2
+SCRIPT_BEFORE_CMAKE=$3
+SCRIPT_BETWEEN_CMAKE_MAKE=$4
+SCRIPT_AFTER_MAKE=$5
+SCRIPT_AFTER_MAKE_TEST=$6
 
 cd $GITHUB_WORKSPACE
 
@@ -42,12 +41,10 @@ sh tools/code_check.sh
 
 apt -y install $APT_DEPENDENCIES
 
-echo "SOURCE_DEPENDENCIES"
-if [ ! -z "$SOURCE_DEPENDENCIES" ] ; then
-  cat $SOURCE_DEPENDENCIES
-  mkdir deps/src
-  cd deps/src
-  vcs import < $SOURCE_DEPENDENCIES
+if [ -f "../.github/ci-bionic/dependencies.yaml" ] ; then
+  mkdir -p deps/src
+  cd deps
+  vcs import src < ../.github/ci-bionic/dependencies.yaml
   cd ..
   colcon build --symlink-install --merge-install --cmake-args -DBUILD_TESTING=false
   . install/setup.sh
