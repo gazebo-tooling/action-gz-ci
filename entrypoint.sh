@@ -23,7 +23,8 @@ apt -y install \
   g++-8 \
   git \
   cppcheck \
-  python3-pip
+  python3-pip \
+  $APT_DEPENDENCIES
 
 pip3 install -U pip vcstool colcon-common-extensions
 
@@ -39,9 +40,7 @@ cd ..
 
 sh tools/code_check.sh
 
-apt -y install $APT_DEPENDENCIES
-
-if [ -f "../.github/ci-bionic/dependencies.yaml" ] ; then
+if [ -f ".github/ci-bionic/dependencies.yaml" ] ; then
   mkdir -p deps/src
   cd deps
   vcs import src < ../.github/ci-bionic/dependencies.yaml
