@@ -44,7 +44,6 @@ if [ -f ".github/ci-bionic/dependencies.yaml" ] ; then
   mkdir -p deps/src
   cd deps
   vcs import src < ../.github/ci-bionic/dependencies.yaml
-  cd ..
   colcon build --symlink-install --merge-install --cmake-args -DBUILD_TESTING=false
   . install/setup.sh
   cd ..
