@@ -26,7 +26,7 @@ apt -y install \
   cppcheck \
   python3-pip
 
-pip install -U pip vcstool colcon-common-extensions
+pip3 install -U pip vcstool colcon-common-extensions
 
 update-alternatives \
   --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 \
