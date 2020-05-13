@@ -31,8 +31,19 @@ jobs:
           script-after-make-test: after_make_test.sh
 ```
 
+### Dependencies
+
 Be sure to put all apt-installable dependencies into `apt-dependencies`.
 
+If you need to install dependencies from source, add a Vcstool yaml file to
+`.github/ci-bionic/dependencies.yaml`. Dependencies will be built using
+`colcon`. Be sure to add the apt dependencies of dependencies build from source
+to `apt-dependencies`.
+
+### Codecov
+
 Create a secret on the repository with Codecov's token, called `CODECOV_TOKEN`.
+
+### Custom scripts
 
 The `script-`s are optional hooks that you can run at specific times of the build.

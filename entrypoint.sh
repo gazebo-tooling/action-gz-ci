@@ -22,7 +22,11 @@ apt -y install \
   curl \
   g++-8 \
   git \
-  cppcheck
+  cppcheck \
+  python3-pip \
+  $APT_DEPENDENCIES
+
+pip3 install -U pip vcstool colcon-common-extensions
 
 update-alternatives \
   --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 \
@@ -36,7 +40,14 @@ cd ..
 
 sh tools/code_check.sh
 
-apt -y install $APT_DEPENDENCIES
+if [ -f ".github/ci-bionic/dependencies.yaml" ] ; then
+  mkdir -p deps/src
+  cd deps
+  vcs import src < ../.github/ci-bionic/dependencies.yaml
+  colcon build --symlink-install --merge-install --cmake-args -DBUILD_TESTING=false
+  . install/setup.sh
+  cd ..
+fi
 
 mkdir build
 cd build
