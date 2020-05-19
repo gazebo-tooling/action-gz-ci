@@ -17,6 +17,10 @@ inputs:
     description: 'Bash script to be run before cmake inside the build folder'
     required: false
     default: ''
+  cmake-args:
+    description: 'Additional CMake arguments to use when building package under test'
+    required: false
+    default: ''
   script-between-cmake-make:
     description: 'Bash script to be run after cmake and before make inside the build folder'
     required: false
@@ -36,6 +40,7 @@ runs:
     - ${{ inputs.apt-dependencies }}
     - ${{ inputs.codecov-token }}
     - ${{ inputs.script-before-cmake }}
+    - ${{ inputs.cmake-args }}
     - ${{ inputs.script-between-cmake-make }}
     - ${{ inputs.script-after-make }}
     - ${{ inputs.script-after-make-test }}
