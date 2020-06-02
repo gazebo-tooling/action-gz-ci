@@ -1,9 +1,9 @@
-ign_bazel:
-  type: git
-  url: https://github.com/ignitionrobotics/ign-bazel.git
-  version: master
-ign_math:
-  type: git
-  url: https://github.com/ignitionrobotics/ign-math.git
-  version: bazel
-
+repositories:
+  ign_bazel:
+    type: git
+    url: https://github.com/ignitionrobotics/ign-bazel.git
+    version: master
+  ign_math:
+    type: git
+    url: https://github.com/ignitionrobotics/ign-math.git
+    version: bazel
