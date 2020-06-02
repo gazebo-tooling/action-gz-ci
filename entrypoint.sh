@@ -12,11 +12,14 @@ cp -r $GITHUB_WORKSPACE /workspace
 
 apt update
 apt -y install wget lsb-release gnupg
+
+# Add OpenRobotics package repository
 sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" > /etc/apt/sources.list.d/gazebo-stable.list'
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
 
-curl https://bazel.build/bazel-release.pub.gpg | apt-key add -
+# Add Bazel package repository
 sh -c 'echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" > /etc/apt/sources.list.d/bazel.list'
+wget -qO - https://bazel.build/bazel-release.pub.gpg | apt-key add -
 
 apt-get update
 apt -y install \
