@@ -9,17 +9,16 @@ inputs:
     description: 'Dependencies to apt install'
     required: false
     default: ''
-  codecov-token:
-    description: 'Token to upload to Codecov'
-    required: false
-    default: ''
-  script-before-cmake:
-    description: 'Bash script to be run before cmake inside the build folder'
-    required: false
-    default: ''
+  build-target:
+    description: 'Thing to build with bazel'
+    required: true
+  test-target:
+    description: 'Thing to build with bazel'
+    required: true
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
     - ${{ inputs.apt-dependencies }}
-    - ${{ inputs.bazel_target }}
+    - ${{ inputs.build-target }}
+    - ${{ inputs.test-target }}

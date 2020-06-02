@@ -3,7 +3,8 @@
 set -x
 
 APT_DEPENDENCIES=$1
-TARGET=$2
+BUILD_TARGET=$2
+TEST_TARGET=$3
 
 mkdir /workspace
 cp /WORKSPACE.bazel /workspace
@@ -42,5 +43,5 @@ update-alternatives \
 vcs import /workspace < /dependencies.yaml
 cd /workspace
 
-bazel build //$TARGET/...
-bazel test //$TARGET/...
+bazel build $BUILD_TARGET
+bazel test $TEST_TARGET
