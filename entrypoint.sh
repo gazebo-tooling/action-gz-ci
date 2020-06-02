@@ -9,6 +9,7 @@ TEST_TARGET=$3
 mkdir /workspace
 cp /WORKSPACE.bazel /workspace
 cp /BUILD.bazel /workspace
+cp /bazelrc /workspace/.bazelrc
 cp -r $GITHUB_WORKSPACE /workspace
 
 apt update
