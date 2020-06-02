@@ -5,10 +5,10 @@ set -x
 APT_DEPENDENCIES=$1
 TARGET=$2
 
-mkdir workspace
-cp WORKSPACE.bazel workspace
-cp BUILD.bazel workspace
-cp -r $GITHUB_WORKSPACE workspace
+mkdir /workspace
+cp /WORKSPACE.bazel /workspace
+cp /BUILD.bazel /workspace
+cp -r $GITHUB_WORKSPACE /workspace
 
 apt update
 apt -y install wget lsb-release gnupg
@@ -36,8 +36,8 @@ update-alternatives \
   --slave /usr/bin/g++ g++ /usr/bin/g++-8 \
   --slave /usr/bin/gcov gcov /usr/bin/gcov-8
 
-vcs import workspace < ./dependencies.yaml
-cd workspace
+vcs import /workspace < /dependencies.yaml
+cd /workspace
 
 bazel build //$TARGET/...
 bazel test //$TARGET/...
