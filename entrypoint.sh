@@ -14,9 +14,13 @@ apt update
 apt -y install wget lsb-release gnupg
 sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" > /etc/apt/sources.list.d/gazebo-stable.list'
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
+
+curl https://bazel.build/bazel-release.pub.gpg | apt-key add -
+sh -c 'echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" > /etc/apt/sources.list.d/bazel.list'
+
 apt-get update
 apt -y install \
-  cmake \
+  bazel \
   build-essential \
   curl \
   g++-8 \
@@ -27,15 +31,12 @@ apt -y install \
 
 pip3 install -U pip vcstool
 
-curl https://bazel.build/bazel-release.pub.gpg | apt-key add -
-sh -c 'echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" > /etc/apt/sources.list.d/bazel.list'
-
 update-alternatives \
   --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 \
   --slave /usr/bin/g++ g++ /usr/bin/g++-8 \
   --slave /usr/bin/gcov gcov /usr/bin/gcov-8
 
-vcs import workspace < ../dependencies.yaml
+vcs import workspace < ./dependencies.yaml
 cd workspace
 
 bazel build //$TARGET/...
