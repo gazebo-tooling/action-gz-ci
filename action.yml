@@ -33,6 +33,10 @@ inputs:
     description: 'Bash script to be run after make test inside the build folder'
     required: false
     default: ''
+  gzdev_project_name:
+    description: 'Project name to in gzdev repository configuration. Empty not to use gzdev'
+    required: false
+    default: ''
 runs:
   using: 'docker'
   image: 'Dockerfile'

@@ -9,13 +9,24 @@ CMAKE_ARGS=$4
 SCRIPT_BETWEEN_CMAKE_MAKE=$5
 SCRIPT_AFTER_MAKE=$6
 SCRIPT_AFTER_MAKE_TEST=$7
+GZDEV_PROJECT_NAME=$8
 
 cd $GITHUB_WORKSPACE
 
 apt update
 apt -y install wget lsb-release gnupg
-sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" > /etc/apt/sources.list.d/gazebo-stable.list'
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
+
+if [ -n "${GZDEV_PROJECT_NAME}" ]; then
+  apt-get install git
+  wget https://raw.githubusercontent.com/ignition-tooling/release-tools/master/jenkins-scripts/tools/detect_cmake_major_version.py
+  software_major_version=$(python detect_cmake_major_version.py CMakeLists.txt)
+  git clone --shallow 1 https://github.com/osrf/gzdev /tmp/gzdev
+  /tmp/gzdev.py repository enable --project="${GZDEV_PROJECT_NAME}${software_major_version}"
+else
+  sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" > /etc/apt/sources.list.d/gazebo-stable.list'
+  apt-key adv --keyserver keyserver.ubuntu.com --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
+fi
+
 apt-get update
 apt -y install \
   cmake \
