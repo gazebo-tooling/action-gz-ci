@@ -18,7 +18,7 @@ apt update
 apt -y install wget lsb-release gnupg
 
 if [ -n "${GZDEV_PROJECT_NAME}" ]; then
-  apt-get install git
+  apt-get install git python3
   wget https://raw.githubusercontent.com/ignition-tooling/release-tools/master/jenkins-scripts/tools/detect_cmake_major_version.py
   software_major_version=$(python detect_cmake_major_version.py CMakeLists.txt)
   git clone --shallow 1 https://github.com/osrf/gzdev /tmp/gzdev
