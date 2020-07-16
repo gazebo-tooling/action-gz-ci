@@ -18,12 +18,15 @@ apt update
 apt -y install wget lsb-release gnupg
 
 if [ -n "${GZDEV_PROJECT_NAME}" ]; then
-  apt-get install -y git python3
+  apt -y install \
+    git \
+    python3-pip
   wget https://raw.githubusercontent.com/ignition-tooling/release-tools/master/jenkins-scripts/tools/detect_cmake_major_version.py
   software_major_version=$(python3 detect_cmake_major_version.py $GITHUB_WORKSPACE/CMakeLists.txt)
   git clone --depth 1 https://github.com/osrf/gzdev /tmp/gzdev
   pip3 install -r /tmp/gzdev/requirements.txt
-  /tmp/gzdev/gzdev.py repository enable --project="${GZDEV_PROJECT_NAME}${software_major_version}"
+  /tmp/gzdev/gzdev.py \
+    repository enable --project="${GZDEV_PROJECT_NAME}${software_major_version}"
 else
   sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" > /etc/apt/sources.list.d/gazebo-stable.list'
   apt-key adv --keyserver keyserver.ubuntu.com --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
