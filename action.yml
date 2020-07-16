@@ -48,3 +48,4 @@ runs:
     - ${{ inputs.script-between-cmake-make }}
     - ${{ inputs.script-after-make }}
     - ${{ inputs.script-after-make-test }}
+    - ${{ inputs.gzdev_project_name }}
