@@ -1,6 +1,7 @@
 #!/bin/sh -l
 
 set -x
+set -e
 
 APT_DEPENDENCIES=$1
 CODECOV_TOKEN=$2
