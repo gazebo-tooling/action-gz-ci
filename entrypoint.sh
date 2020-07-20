@@ -6,7 +6,7 @@ set -e
 APT_DEPENDENCIES=$1
 CODECOV_TOKEN=$2
 CMAKE_ARGS=$3
-REPOSITORY=$4
+GITHUB_REPOSITORY=$4
 
 SOURCE_DEPENDENCIES="`pwd`/.github/ci-bionic/dependencies.yaml"
 SCRIPT_BEFORE_CMAKE="`pwd`/.github/ci-bionic/before_cmake.sh"
@@ -20,11 +20,11 @@ echo ::group::Dependencies from binaries
 apt update
 apt -y install wget lsb-release gnupg
 
-if [ -n "${REPOSITORY}" ]; then
+if [ -n "${GITHUB_REPOSITORY}" ]; then
 
-  PACKAGE=$(echo $REPOSITORY | cut -d'/' -f 2)
+  PACKAGE=$(echo $GITHUB_REPOSITORY | cut -d'/' -f 2)
   PACKAGE=$(echo "${PACKAGE/ign/ignition}")
-  echo ${REPOSITORY}
+  echo ${GITHUB_REPOSITORY}
   echo ${PACKAGE}
 
   apt -y install \

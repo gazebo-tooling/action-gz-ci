@@ -28,4 +28,3 @@ runs:
     - ${{ inputs.apt-dependencies }}
     - ${{ inputs.codecov-token }}
     - ${{ inputs.cmake-args }}
-    - ${{ github.repository }}
