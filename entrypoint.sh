@@ -56,7 +56,7 @@ cd build
 
 echo "SCRIPT_BEFORE_CMAKE"
 if [ ! -z "$SCRIPT_BEFORE_CMAKE" ] ; then
-  source $SCRIPT_BEFORE_CMAKE
+  . $SCRIPT_BEFORE_CMAKE
 fi
 
 if [ ! -z "$CODECOV_TOKEN" ] ; then
@@ -67,14 +67,14 @@ fi
 
 echo "SCRIPT_BETWEEN_CMAKE_MAKE"
 if [ ! -z "$SCRIPT_BETWEEN_CMAKE_MAKE" ] ; then
-  source $SCRIPT_BETWEEN_CMAKE_MAKE
+  . $SCRIPT_BETWEEN_CMAKE_MAKE
 fi
 
 make
 
 echo "SCRIPT_AFTER_MAKE"
 if [ ! -z "$SCRIPT_AFTER_MAKE" ] ; then
-  source $SCRIPT_AFTER_MAKE
+  . $SCRIPT_AFTER_MAKE
 fi
 
 export CTEST_OUTPUT_ON_FAILURE=1
@@ -82,7 +82,7 @@ make test
 
 echo "SCRIPT_AFTER_MAKE_TEST"
 if [ ! -z "$SCRIPT_AFTER_MAKE_TEST" ] ; then
-  source $SCRIPT_AFTER_MAKE_TEST
+  . $SCRIPT_AFTER_MAKE_TEST
 fi
 
 if [ ! -z "$CODECOV_TOKEN" ] ; then
