@@ -5,12 +5,14 @@ set -e
 
 APT_DEPENDENCIES=$1
 CODECOV_TOKEN=$2
-SCRIPT_BEFORE_CMAKE=$3
-CMAKE_ARGS=$4
-SCRIPT_BETWEEN_CMAKE_MAKE=$5
-SCRIPT_AFTER_MAKE=$6
-SCRIPT_AFTER_MAKE_TEST=$7
-GZDEV_PROJECT_NAME=$8
+CMAKE_ARGS=$3
+GZDEV_PROJECT_NAME=$4
+
+SOURCE_DEPENDENCIES=".github/ci-bionic/dependencies.yaml"
+SCRIPT_BEFORE_CMAKE="../.github/ci-bionic/before_cmake.sh"
+SCRIPT_BETWEEN_CMAKE_MAKE="../.github/ci-bionic/between_cmake_make.sh"
+SCRIPT_AFTER_MAKE="../.github/ci-bionic/after_make.sh"
+SCRIPT_AFTER_MAKE_TEST="../.github/ci-bionic/after_make_test.sh"
 
 cd $GITHUB_WORKSPACE
 
@@ -57,7 +59,8 @@ cd ..
 
 sh tools/code_check.sh
 
-if [ -f ".github/ci-bionic/dependencies.yaml" ] ; then
+echo ::group::Dependencies from source
+if [ -f "$SOURCE_DEPENDENCIES" ] ; then
   mkdir -p deps/src
   cd deps
   vcs import src < ../.github/ci-bionic/dependencies.yaml
@@ -69,9 +72,9 @@ fi
 mkdir build
 cd build
 
-echo "SCRIPT_BEFORE_CMAKE"
-if [ ! -z "$SCRIPT_BEFORE_CMAKE" ] ; then
-  bash $SCRIPT_BEFORE_CMAKE
+echo ::group::Script before cmake
+if [ -f "$SCRIPT_BEFORE_CMAKE" ] ; then
+  . $SCRIPT_BEFORE_CMAKE
 fi
 
 if [ ! -z "$CODECOV_TOKEN" ] ; then
@@ -80,24 +83,24 @@ else
   cmake .. $CMAKE_ARGS
 fi
 
-echo "SCRIPT_BETWEEN_CMAKE_MAKE"
-if [ ! -z "$SCRIPT_BETWEEN_CMAKE_MAKE" ] ; then
-  bash $SCRIPT_BETWEEN_CMAKE_MAKE
+echo ::group::Script between cmake and make
+if [ -f "$SCRIPT_BETWEEN_CMAKE_MAKE" ] ; then
+  . $SCRIPT_BETWEEN_CMAKE_MAKE 2>&1
 fi
 
 make
 
-echo "SCRIPT_AFTER_MAKE"
-if [ ! -z "$SCRIPT_AFTER_MAKE" ] ; then
-  bash $SCRIPT_AFTER_MAKE
+echo ::group::Script after make
+if [ -f "$SCRIPT_AFTER_MAKE" ] ; then
+  . $SCRIPT_AFTER_MAKE 2>&1
 fi
 
 export CTEST_OUTPUT_ON_FAILURE=1
 make test
 
-echo "SCRIPT_AFTER_MAKE_TEST"
-if [ ! -z "$SCRIPT_AFTER_MAKE_TEST" ] ; then
-  bash $SCRIPT_AFTER_MAKE_TEST
+echo ::group::Script after make test
+if [ -f "$SCRIPT_AFTER_MAKE_TEST" ] ; then
+  . $SCRIPT_AFTER_MAKE_TEST 2>&1
 fi
 
 if [ ! -z "$CODECOV_TOKEN" ] ; then
