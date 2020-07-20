@@ -6,7 +6,7 @@ set -e
 APT_DEPENDENCIES=$1
 CODECOV_TOKEN=$2
 CMAKE_ARGS=$3
-GZDEV_PROJECT_NAME=$4
+REPOSITORY=$4
 
 SOURCE_DEPENDENCIES="`pwd`/.github/ci-bionic/dependencies.yaml"
 SCRIPT_BEFORE_CMAKE="`pwd`/.github/ci-bionic/before_cmake.sh"
@@ -20,7 +20,13 @@ echo ::group::Dependencies from binaries
 apt update
 apt -y install wget lsb-release gnupg
 
-if [ -n "${GZDEV_PROJECT_NAME}" ]; then
+if [ -n "${REPOSITORY}" ]; then
+
+  PACKAGE=$(echo $REPOSITORY | cut -d'/' -f 2)
+  PACKAGE=$(echo "${PACKAGE/ign/ignition}")
+  echo ${REPOSITORY}
+  echo ${PACKAGE}
+
   apt -y install \
     git \
     python3-pip
@@ -29,7 +35,7 @@ if [ -n "${GZDEV_PROJECT_NAME}" ]; then
   git clone --depth 1 https://github.com/osrf/gzdev /tmp/gzdev
   pip3 install -r /tmp/gzdev/requirements.txt
   /tmp/gzdev/gzdev.py \
-    repository enable --project="${GZDEV_PROJECT_NAME}${software_major_version}"
+    repository enable --project="${PACKAGE}${software_major_version}"
 else
   sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" > /etc/apt/sources.list.d/gazebo-stable.list'
   apt-key adv --keyserver keyserver.ubuntu.com --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
