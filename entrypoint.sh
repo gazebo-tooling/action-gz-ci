@@ -6,7 +6,6 @@ set -e
 APT_DEPENDENCIES=$1
 CODECOV_TOKEN=$2
 CMAKE_ARGS=$3
-GITHUB_REPOSITORY=$4
 
 SOURCE_DEPENDENCIES="`pwd`/.github/ci-bionic/dependencies.yaml"
 SCRIPT_BEFORE_CMAKE="`pwd`/.github/ci-bionic/before_cmake.sh"
