@@ -7,6 +7,7 @@ APT_DEPENDENCIES=$1
 CODECOV_TOKEN=$2
 CMAKE_ARGS=$3
 
+SOURCE_DEPENDENCIES=".github/ci-bionic/dependencies.yaml"
 SCRIPT_BEFORE_CMAKE="../.github/ci-bionic/before_cmake.sh"
 SCRIPT_BETWEEN_CMAKE_MAKE="../.github/ci-bionic/between_cmake_make.sh"
 SCRIPT_AFTER_MAKE="../.github/ci-bionic/after_make.sh"
@@ -43,7 +44,8 @@ cd ..
 
 sh tools/code_check.sh
 
-if [ -f ".github/ci-bionic/dependencies.yaml" ] ; then
+echo ::group::Dependencies from source
+if [ -f "$SOURCE_DEPENDENCIES" ] ; then
   mkdir -p deps/src
   cd deps
   vcs import src < ../.github/ci-bionic/dependencies.yaml
@@ -55,7 +57,8 @@ fi
 mkdir build
 cd build
 
-if [ ! -z "$SCRIPT_BEFORE_CMAKE" ] ; then
+echo ::group::Script before cmake
+if [ -f "$SCRIPT_BEFORE_CMAKE" ] ; then
   . $SCRIPT_BEFORE_CMAKE
 fi
 
@@ -65,21 +68,24 @@ else
   cmake .. $CMAKE_ARGS
 fi
 
-if [ ! -z "$SCRIPT_BETWEEN_CMAKE_MAKE" ] ; then
-  . $SCRIPT_BETWEEN_CMAKE_MAKE
+echo ::group::Script between cmake and make
+if [ -f "$SCRIPT_BETWEEN_CMAKE_MAKE" ] ; then
+  . $SCRIPT_BETWEEN_CMAKE_MAKE 2>&1
 fi
 
 make
 
-if [ ! -z "$SCRIPT_AFTER_MAKE" ] ; then
-  . $SCRIPT_AFTER_MAKE
+echo ::group::Script after make
+if [ -f "$SCRIPT_AFTER_MAKE" ] ; then
+  . $SCRIPT_AFTER_MAKE 2>&1
 fi
 
 export CTEST_OUTPUT_ON_FAILURE=1
 make test
 
-if [ ! -z "$SCRIPT_AFTER_MAKE_TEST" ] ; then
-  . $SCRIPT_AFTER_MAKE_TEST
+echo ::group::Script after make test
+if [ -f "$SCRIPT_AFTER_MAKE_TEST" ] ; then
+  . $SCRIPT_AFTER_MAKE_TEST 2>&1
 fi
 
 if [ ! -z "$CODECOV_TOKEN" ] ; then
