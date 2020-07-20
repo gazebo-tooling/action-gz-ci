@@ -25,11 +25,7 @@ jobs:
         with:
           apt-dependencies: ''
           codecov-token: ${{ secrets.CODECOV_TOKEN }}
-          script-before-cmake: before_cmake.sh
           cmake-args: '-DBUILD_TESTING=1'
-          script-between-cmake-make: between_cmake_make.sh
-          script-after-make: after_make.sh
-          script-after-make-test: after_make_test.sh
 ```
 
 ### Dependencies
@@ -47,7 +43,15 @@ Create a secret on the repository with Codecov's token, called `CODECOV_TOKEN`.
 
 ### Custom scripts
 
-The `script-`s are optional hooks that you can run at specific times of the build.
+You can add optional scripts to be run at specific times of the build:
+
+* `.github/ci-bionic/before_cmake.sh`: Runs before the `cmake` call
+* `.github/ci-bionic/between_cmake_make.sh`: Runs after the `cmake` and before `make`
+* `.github/ci-bionic/after_make.sh`: Runs after `make` and before `make test`
+* `.github/ci-bionic/after_make_test.sh`: Runs after `make test`
+
+All scripts are sourced inside the build folder. Be sure to move back to the
+build folder before exiting the script.
 
 ### Custom CMake Arguments
 

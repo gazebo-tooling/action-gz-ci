@@ -5,11 +5,12 @@ set -e
 
 APT_DEPENDENCIES=$1
 CODECOV_TOKEN=$2
-SCRIPT_BEFORE_CMAKE=$3
-CMAKE_ARGS=$4
-SCRIPT_BETWEEN_CMAKE_MAKE=$5
-SCRIPT_AFTER_MAKE=$6
-SCRIPT_AFTER_MAKE_TEST=$7
+CMAKE_ARGS=$3
+
+SCRIPT_BEFORE_CMAKE="../.github/ci-bionic/before_cmake.sh"
+SCRIPT_BETWEEN_CMAKE_MAKE="../.github/ci-bionic/between_cmake_make.sh"
+SCRIPT_AFTER_MAKE="../.github/ci-bionic/after_make.sh"
+SCRIPT_AFTER_MAKE_TEST="../.github/ci-bionic/after_make_test.sh"
 
 cd $GITHUB_WORKSPACE
 
@@ -54,7 +55,6 @@ fi
 mkdir build
 cd build
 
-echo "SCRIPT_BEFORE_CMAKE"
 if [ ! -z "$SCRIPT_BEFORE_CMAKE" ] ; then
   . $SCRIPT_BEFORE_CMAKE
 fi
@@ -65,14 +65,12 @@ else
   cmake .. $CMAKE_ARGS
 fi
 
-echo "SCRIPT_BETWEEN_CMAKE_MAKE"
 if [ ! -z "$SCRIPT_BETWEEN_CMAKE_MAKE" ] ; then
   . $SCRIPT_BETWEEN_CMAKE_MAKE
 fi
 
 make
 
-echo "SCRIPT_AFTER_MAKE"
 if [ ! -z "$SCRIPT_AFTER_MAKE" ] ; then
   . $SCRIPT_AFTER_MAKE
 fi
@@ -80,7 +78,6 @@ fi
 export CTEST_OUTPUT_ON_FAILURE=1
 make test
 
-echo "SCRIPT_AFTER_MAKE_TEST"
 if [ ! -z "$SCRIPT_AFTER_MAKE_TEST" ] ; then
   . $SCRIPT_AFTER_MAKE_TEST
 fi
