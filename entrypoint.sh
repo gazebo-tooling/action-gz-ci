@@ -7,11 +7,11 @@ APT_DEPENDENCIES=$1
 CODECOV_TOKEN=$2
 CMAKE_ARGS=$3
 
-SOURCE_DEPENDENCIES=".github/ci-bionic/dependencies.yaml"
-SCRIPT_BEFORE_CMAKE="../.github/ci-bionic/before_cmake.sh"
-SCRIPT_BETWEEN_CMAKE_MAKE="../.github/ci-bionic/between_cmake_make.sh"
-SCRIPT_AFTER_MAKE="../.github/ci-bionic/after_make.sh"
-SCRIPT_AFTER_MAKE_TEST="../.github/ci-bionic/after_make_test.sh"
+SOURCE_DEPENDENCIES="`pwd`/.github/ci-bionic/dependencies.yaml"
+SCRIPT_BEFORE_CMAKE="`pwd`/.github/ci-bionic/before_cmake.sh"
+SCRIPT_BETWEEN_CMAKE_MAKE="`pwd`/.github/ci-bionic/between_cmake_make.sh"
+SCRIPT_AFTER_MAKE="`pwd`/.github/ci-bionic/after_make.sh"
+SCRIPT_AFTER_MAKE_TEST="`pwd`/.github/ci-bionic/after_make_test.sh"
 
 cd $GITHUB_WORKSPACE
 
