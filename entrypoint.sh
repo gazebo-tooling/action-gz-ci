@@ -19,26 +19,19 @@ echo ::group::Dependencies from binaries
 apt update
 apt -y install wget lsb-release gnupg
 
-if [ -n "${GITHUB_REPOSITORY}" ]; then
+# Infer ignition package name from GITHUB_REPOSITORY
+PACKAGE=$(echo $GITHUB_REPOSITORY | cut -d'-' -f 2)
+PACKAGE=ignition-${PACKAGE}
 
-  PACKAGE=$(echo $GITHUB_REPOSITORY | cut -d'-' -f 2)
-  PACKAGE=ignition-${PACKAGE}
-  echo ${GITHUB_REPOSITORY}
-  echo ${PACKAGE}
-
-  apt -y install \
-    git \
-    python3-pip
-  wget https://raw.githubusercontent.com/ignition-tooling/release-tools/master/jenkins-scripts/tools/detect_cmake_major_version.py
-  software_major_version=$(python3 detect_cmake_major_version.py $GITHUB_WORKSPACE/CMakeLists.txt)
-  git clone --depth 1 https://github.com/osrf/gzdev /tmp/gzdev
-  pip3 install -r /tmp/gzdev/requirements.txt
-  /tmp/gzdev/gzdev.py \
-    repository enable --project="${PACKAGE}${software_major_version}"
-else
-  sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" > /etc/apt/sources.list.d/gazebo-stable.list'
-  apt-key adv --keyserver keyserver.ubuntu.com --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
-fi
+apt -y install \
+  git \
+  python3-pip
+wget https://raw.githubusercontent.com/ignition-tooling/release-tools/master/jenkins-scripts/tools/detect_cmake_major_version.py
+software_major_version=$(python3 detect_cmake_major_version.py $GITHUB_WORKSPACE/CMakeLists.txt)
+git clone --depth 1 https://github.com/osrf/gzdev /tmp/gzdev
+pip3 install -r /tmp/gzdev/requirements.txt
+/tmp/gzdev/gzdev.py \
+  repository enable --project="${PACKAGE}${software_major_version}"
 
 apt-get update
 apt -y install \
