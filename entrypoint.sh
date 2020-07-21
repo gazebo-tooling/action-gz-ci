@@ -15,14 +15,12 @@ SCRIPT_AFTER_MAKE_TEST="`pwd`/.github/ci-bionic/after_make_test.sh"
 
 cd $GITHUB_WORKSPACE
 
-echo ::group::Install tools
-
-echo ::group::apt
+echo ::group::Install tools: apt
 apt update
 apt -y install wget lsb-release gnupg
 sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" > /etc/apt/sources.list.d/gazebo-stable.list'
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys D2486D2DD83DB69272AFE98867170598AF249743
-apt-get update
+apt-get update 2>&1
 apt -y install \
   cmake \
   build-essential \
@@ -33,17 +31,15 @@ apt -y install \
   python3-pip
 echo ::endgroup::
 
-echo ::group::pip
+echo ::group::Install tools: pip
 pip3 install -U pip vcstool colcon-common-extensions
 echo ::endgroup::
 
-echo ::group::source
+echo ::group::Install tools: source
 git clone https://github.com/linux-test-project/lcov.git -b v1.14 2>&1
 cd lcov
 make install
 cd ..
-echo ::endgroup::
-
 echo ::endgroup::
 
 echo ::group::GCC 8
