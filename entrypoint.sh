@@ -13,25 +13,27 @@ SCRIPT_BETWEEN_CMAKE_MAKE="`pwd`/.github/ci-bionic/between_cmake_make.sh"
 SCRIPT_AFTER_MAKE="`pwd`/.github/ci-bionic/after_make.sh"
 SCRIPT_AFTER_MAKE_TEST="`pwd`/.github/ci-bionic/after_make_test.sh"
 
-cd $GITHUB_WORKSPACE
+cd "$GITHUB_WORKSPACE"
 
 echo ::group::Dependencies from binaries
 apt update
-apt -y install wget lsb-release gnupg
+apt -y install \
+  wget \
+  lsb-release \
+  gnupg \
+  git \
+  python3-pip
 
 # Infer ignition package name from GITHUB_REPOSITORY
 PACKAGE=$(echo $GITHUB_REPOSITORY | cut -d'-' -f 2)
 PACKAGE=ignition-${PACKAGE}
-
-apt -y install \
-  git \
-  python3-pip
 wget https://raw.githubusercontent.com/ignition-tooling/release-tools/master/jenkins-scripts/tools/detect_cmake_major_version.py
-software_major_version=$(python3 detect_cmake_major_version.py $GITHUB_WORKSPACE/CMakeLists.txt)
+PACKAGE_MAJOR_VERSION=$(python3 detect_cmake_major_version.py "$GITHUB_WORKSPACE"/CMakeLists.txt)
+
 git clone --depth 1 https://github.com/osrf/gzdev /tmp/gzdev
 pip3 install -r /tmp/gzdev/requirements.txt
 /tmp/gzdev/gzdev.py \
-  repository enable --project="${PACKAGE}${software_major_version}"
+  repository enable --project="${PACKAGE}${PACKAGE_MAJOR_VERSION}"
 
 apt-get update
 apt -y install \
