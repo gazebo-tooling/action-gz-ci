@@ -25,7 +25,7 @@ apt -y install \
   python3-pip
 
 # Infer package name from GITHUB_REPOSITORY
-PACKAGE=$(echo $GITHUB_REPOSITORY | sed 's:.*/::' | sed 's:ign-:ignition-:'
+PACKAGE=$(echo "$GITHUB_REPOSITORY" | sed 's:.*/::' | sed 's:ign-:ignition-:')
 wget https://raw.githubusercontent.com/ignition-tooling/release-tools/master/jenkins-scripts/tools/detect_cmake_major_version.py
 PACKAGE_MAJOR_VERSION=$(python3 detect_cmake_major_version.py "$GITHUB_WORKSPACE"/CMakeLists.txt)
 
