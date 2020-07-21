@@ -17,10 +17,6 @@ inputs:
     description: 'Additional CMake arguments to use when building package under test'
     required: false
     default: ''
-  gzdev_project_name:
-    description: 'Project name to in gzdev repository configuration. Empty not to use gzdev'
-    required: false
-    default: ''
 runs:
   using: 'docker'
   image: 'Dockerfile'
