@@ -49,14 +49,12 @@ update-alternatives \
   --slave /usr/bin/gcov gcov /usr/bin/gcov-8
 echo ::endgroup::
 
-echo ::group::Fetch source dependencies
 if [ -f "$SOURCE_DEPENDENCIES" ] ; then
+  echo ::group::Fetch source dependencies
   mkdir -p deps/src
-  cd deps
-  vcs import src < ../.github/ci-bionic/dependencies.yaml
-  cd ..
+  vcs import deps/src < ../.github/ci-bionic/dependencies.yaml
+  echo ::endgroup::
 fi
-echo ::endgroup::
 
 echo ::group::Install dependencies from binaries
 apt -y install \
@@ -64,14 +62,14 @@ apt -y install \
   $(sort -u $(find . -iname 'packages.apt') | tr '\n' ' ')
 echo ::endgroup::
 
-echo ::group::Compile dependencies from source
 if [ -f "$SOURCE_DEPENDENCIES" ] ; then
+  echo ::group::Compile dependencies from source
   cd deps
   colcon build --symlink-install --merge-install --cmake-args -DBUILD_TESTING=false
   . install/setup.sh
   cd ..
+  echo ::endgroup::
 fi
-echo ::endgroup::
 
 echo ::group::Code check
 sh tools/code_check.sh 2>&1
@@ -82,11 +80,11 @@ mkdir build
 cd build
 echo ::endgroup::
 
-echo ::group::Script before cmake
 if [ -f "$SCRIPT_BEFORE_CMAKE" ] ; then
+  echo ::group::Script before cmake
   . $SCRIPT_BEFORE_CMAKE
+  echo ::endgroup::
 fi
-echo ::endgroup::
 
 echo ::group::cmake
 if [ ! -z "$CODECOV_TOKEN" ] ; then
@@ -96,40 +94,40 @@ else
 fi
 echo ::endgroup::
 
-echo ::group::Script between cmake and make
 if [ -f "$SCRIPT_BETWEEN_CMAKE_MAKE" ] ; then
+  echo ::group::Script between cmake and make
   . $SCRIPT_BETWEEN_CMAKE_MAKE 2>&1
+  echo ::endgroup::
 fi
-echo ::endgroup::
 
 echo ::group::make
 make
 echo ::endgroup::
 
-echo ::group::Script after make
 if [ -f "$SCRIPT_AFTER_MAKE" ] ; then
+  echo ::group::Script after make
   . $SCRIPT_AFTER_MAKE 2>&1
+  echo ::endgroup::
 fi
-echo ::endgroup::
 
 echo ::group::make test
 export CTEST_OUTPUT_ON_FAILURE=1
 make test
 echo ::endgroup::
 
-echo ::group::Script after make test
 if [ -f "$SCRIPT_AFTER_MAKE_TEST" ] ; then
+  echo ::group::Script after make test
   . $SCRIPT_AFTER_MAKE_TEST 2>&1
+  echo ::endgroup::
 fi
-echo ::endgroup::
 
-echo ::group::codecov
 if [ ! -z "$CODECOV_TOKEN" ] ; then
+  echo ::group::codecov
   make coverage VERBOSE=1
 
   curl -s https://codecov.io/bash > codecov.sh
 
   # disable gcov output with `-X gcovout -X gcov`
   bash codecov.sh -t $CODECOV_TOKEN -X gcovout -X gcov
+  echo ::endgroup::
 fi
-echo ::endgroup::
