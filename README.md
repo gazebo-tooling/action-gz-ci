@@ -23,14 +23,21 @@ jobs:
         id: ci
         uses: ignition-tooling/ubuntu-bionic-ci-action@v1
         with:
-          apt-dependencies: ''
           codecov-token: ${{ secrets.CODECOV_TOKEN }}
           cmake-args: '-DBUILD_TESTING=1'
 ```
 
 ### Dependencies
 
-Be sure to put all apt-installable dependencies into `apt-dependencies`.
+#### APT dependencies
+
+Be sure to declare all apt-installable dependencies in a flat list into:
+
+`.github/ci-bionic/packages.apt`
+
+> The `apt-dependencies` input is deprecated.
+
+#### Source dependencies
 
 If you need to install dependencies from source, add a Vcstool yaml file to
 `.github/ci-bionic/dependencies.yaml`. Dependencies will be built using

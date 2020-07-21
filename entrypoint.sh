@@ -3,10 +3,11 @@
 set -x
 set -e
 
-APT_DEPENDENCIES=$1
+OLD_APT_DEPENDENCIES=$1
 CODECOV_TOKEN=$2
 CMAKE_ARGS=$3
 
+APT_DEPENDENCIES="`pwd`/.github/ci-bionic/packages.apt"
 SOURCE_DEPENDENCIES="`pwd`/.github/ci-bionic/dependencies.yaml"
 SCRIPT_BEFORE_CMAKE="`pwd`/.github/ci-bionic/before_cmake.sh"
 SCRIPT_BETWEEN_CMAKE_MAKE="`pwd`/.github/ci-bionic/between_cmake_make.sh"
@@ -29,7 +30,9 @@ apt -y install \
   git \
   cppcheck \
   python3-pip \
-  $APT_DEPENDENCIES
+  $OLD_APT_DEPENDENCIES \
+  $(sort -u $APT_DEPENDENCIES | tr '\n' ' ')
+
 
 pip3 install -U pip vcstool colcon-common-extensions
 echo ::endgroup::
