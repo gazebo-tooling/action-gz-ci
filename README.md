@@ -31,7 +31,8 @@ jobs:
 
 #### APT dependencies
 
-Be sure to declare all apt-installable dependencies in a flat list into:
+Be sure to declare all apt-installable dependencies in the following file, one
+package per line.
 
 `.github/ci-bionic/packages.apt`
 

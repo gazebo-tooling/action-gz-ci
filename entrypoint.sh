@@ -7,7 +7,6 @@ OLD_APT_DEPENDENCIES=$1
 CODECOV_TOKEN=$2
 CMAKE_ARGS=$3
 
-APT_DEPENDENCIES="`pwd`/.github/ci-bionic/packages.apt"
 SOURCE_DEPENDENCIES="`pwd`/.github/ci-bionic/dependencies.yaml"
 SCRIPT_BEFORE_CMAKE="`pwd`/.github/ci-bionic/before_cmake.sh"
 SCRIPT_BETWEEN_CMAKE_MAKE="`pwd`/.github/ci-bionic/between_cmake_make.sh"
@@ -16,7 +15,9 @@ SCRIPT_AFTER_MAKE_TEST="`pwd`/.github/ci-bionic/after_make_test.sh"
 
 cd $GITHUB_WORKSPACE
 
-echo ::group::Dependencies from binaries
+echo ::group::Install tools
+
+echo ::group::apt
 apt update
 apt -y install wget lsb-release gnupg
 sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" > /etc/apt/sources.list.d/gazebo-stable.list'
@@ -29,12 +30,20 @@ apt -y install \
   g++-8 \
   git \
   cppcheck \
-  python3-pip \
-  $OLD_APT_DEPENDENCIES \
-  $(sort -u $APT_DEPENDENCIES | tr '\n' ' ')
+  python3-pip
+echo ::endgroup::
 
-
+echo ::group::pip
 pip3 install -U pip vcstool colcon-common-extensions
+echo ::endgroup::
+
+echo ::group::source
+git clone https://github.com/linux-test-project/lcov.git -b v1.14 2>&1
+cd lcov
+make install
+cd ..
+echo ::endgroup::
+
 echo ::endgroup::
 
 echo ::group::GCC 8
@@ -44,27 +53,35 @@ update-alternatives \
   --slave /usr/bin/gcov gcov /usr/bin/gcov-8
 echo ::endgroup::
 
-echo ::group::Install LCOV
-git clone https://github.com/linux-test-project/lcov.git -b v1.14 2>&1
-cd lcov
-make install
-cd ..
+echo ::group::Fetch source dependencies
+if [ -f "$SOURCE_DEPENDENCIES" ] ; then
+  mkdir -p deps/src
+  cd deps
+  vcs import src < ../.github/ci-bionic/dependencies.yaml
+  cd ..
+fi
+echo ::endgroup::
+
+echo ::group::Install dependencies from binaries
+apt -y install \
+  $OLD_APT_DEPENDENCIES \
+  $(sort -u $(find . -iname 'packages.apt') | tr '\n' ' ')
+echo ::endgroup::
+
+echo ::group::Compile dependencies from source
+if [ -f "$SOURCE_DEPENDENCIES" ] ; then
+  cd deps
+  colcon build --symlink-install --merge-install --cmake-args -DBUILD_TESTING=false
+  . install/setup.sh
+  cd ..
+fi
 echo ::endgroup::
 
 echo ::group::Code check
 sh tools/code_check.sh 2>&1
 echo ::endgroup::
 
-echo ::group::Dependencies from source
-if [ -f "$SOURCE_DEPENDENCIES" ] ; then
-  mkdir -p deps/src
-  cd deps
-  vcs import src < ../.github/ci-bionic/dependencies.yaml
-  colcon build --symlink-install --merge-install --cmake-args -DBUILD_TESTING=false
-  . install/setup.sh
-  cd ..
-fi
-
+echo ::group::Build folder
 mkdir build
 cd build
 echo ::endgroup::
