@@ -21,9 +21,9 @@ apt -y install wget lsb-release gnupg
 
 if [ -n "${GITHUB_REPOSITORY}" ]; then
 
-  IGNTIION="ignition"
+  IGNITION="ignition"
   PACKAGE_REPO=$(echo $GITHUB_REPOSITORY | cut -d'/' -f 2)
-  PACKAGE=$(echo "${PACKAGE_REPO/ign/$IGNITION}")
+  PACKAGE=${PACKAGE_REPO/ign/$IGNITION}
   echo ${GITHUB_REPOSITORY}
   echo ${PACKAGE_REPO}
   echo ${PACKAGE}
