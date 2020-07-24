@@ -1,3 +1,8 @@
+#!/bin/sh -l
+
+set -x
+set -e
+
 cd /docker
 echo "$INPUT_DOCKER_IMAGE"
 
