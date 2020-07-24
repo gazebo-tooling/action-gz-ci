@@ -25,6 +25,8 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
+    - ${{ inputs.docker_image }}
     - ${{ inputs.apt-dependencies }}
     - ${{ inputs.codecov-token }}
     - ${{ inputs.cmake-args }}
+

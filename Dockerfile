@@ -1,4 +1,4 @@
-FROM $INPUT_DOCKER_IMAGE
+FROM ubuntu:latest
 
 COPY . .
 
