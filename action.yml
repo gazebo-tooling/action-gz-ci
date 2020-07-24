@@ -1,8 +1,12 @@
-name: 'Ignition install'
-description: ''
+name: 'Ignition CI'
+description: 'Build and run tests for Ignition libraries.'
 author: "Louise Poubel"
 inputs:
-  github_token:
+  docker_image:
+    description: "Docker image to use, defaults to ubuntu:bionic"
+    required: false
+    default: 'ubuntu:bionic'
+  github-token:
     description: "Token for the repo. Can be passed in using {{ secrets.GITHUB_TOKEN }}"
     required: true
   apt-dependencies:

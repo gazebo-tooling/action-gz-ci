@@ -1,11 +1,11 @@
-# Ubuntu CI action
+# Ignition CI action
 
 Compile and run tests for Ignition libraries.
 
 ## Usage
 
 Add the following file to an Ignition repository:
-`.github/workflows/ci-bionic.yml`
+`.github/workflows/ci.yml`
 
 ```
 name: Ubuntu Bionic CI
@@ -21,21 +21,33 @@ jobs:
         uses: actions/checkout@v2
       - name: Bionic CI
         id: ci
-        uses: ignition-tooling/ubuntu-bionic-ci-action@v1
+        uses: ignition-tooling/action-ignition-ci@master
         with:
+          docker_image: 'ubuntu:bionic'
           apt-dependencies: ''
           codecov-token: ${{ secrets.CODECOV_TOKEN }}
           cmake-args: '-DBUILD_TESTING=1'
 ```
 
+### Docker image
+
+The `docker_image` input is optional and defaults to `ubuntu:bionic`. It can
+be set to any valid Docker image.
+
+Make sure the files below are saved on directories matching the chosen image.
+
 ### Dependencies
 
 Be sure to put all apt-installable dependencies into `apt-dependencies`.
 
-If you need to install dependencies from source, add a Vcstool yaml file to
-`.github/ci-bionic/dependencies.yaml`. Dependencies will be built using
-`colcon`. Be sure to add the apt dependencies of dependencies build from source
-to `apt-dependencies`.
+If you need to install dependencies from source, add a Vcstool yaml file to:
+
+`.github/ubuntu:bionic/dependencies.yaml`
+
+> Change `ubuntu:bionic` to match the `docker_image` input.
+
+Dependencies will be built using `colcon`. Be sure to add the apt dependencies
+of dependencies build from source to `apt-dependencies`.
 
 ### Codecov
 
@@ -45,10 +57,12 @@ Create a secret on the repository with Codecov's token, called `CODECOV_TOKEN`.
 
 You can add optional scripts to be run at specific times of the build:
 
-* `.github/ci-bionic/before_cmake.sh`: Runs before the `cmake` call
-* `.github/ci-bionic/between_cmake_make.sh`: Runs after the `cmake` and before `make`
-* `.github/ci-bionic/after_make.sh`: Runs after `make` and before `make test`
-* `.github/ci-bionic/after_make_test.sh`: Runs after `make test`
+* `.github/ubuntu:bionic/before_cmake.sh`: Runs before the `cmake` call
+* `.github/ubuntu:bionic/between_cmake_make.sh`: Runs after the `cmake` and before `make`
+* `.github/ubuntu:bionic/after_make.sh`: Runs after `make` and before `make test`
+* `.github/ubuntu:bionic/after_make_test.sh`: Runs after `make test`
+
+> Change `ubuntu:bionic` to match the `docker_image` input.
 
 All scripts are sourced inside the build folder. Be sure to move back to the
 build folder before exiting the script.
