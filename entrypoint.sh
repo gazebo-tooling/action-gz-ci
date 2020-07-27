@@ -72,7 +72,7 @@ fi
 echo ::group::Install dependencies from binaries
 apt -y install \
   $OLD_APT_DEPENDENCIES \
-  $(sort -u $(find . -iname 'packages-'$UBUNTU_VERSION'.apt') | tr '\n' ' ')
+  $(sort -u $(find . -iname 'packages-'$UBUNTU_VERSION'.apt' -o -iname 'packages.apt') | tr '\n' ' ')
 echo ::endgroup::
 
 if [ -f "$SOURCE_DEPENDENCIES" ] ; then

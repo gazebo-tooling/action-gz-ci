@@ -31,10 +31,13 @@ jobs:
 
 #### APT dependencies
 
-Be sure to declare all apt-installable dependencies in the following file, one
+Be sure to declare all apt-installable dependencies in the following files, one
 package per line.
 
-`.github/ci/packages-bionic.apt`
+* `.github/ci/packages.apt` : Installed for all versions.
+* `.github/ci/packages-<ubuntu version>.apt` : where `<ubuntu version>` can be
+  bionic, focal, etc. Use these if you need to install different dependencies
+  according to the distribution.
 
 > The `apt-dependencies` input is deprecated.
 
