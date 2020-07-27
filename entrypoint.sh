@@ -7,12 +7,6 @@ OLD_APT_DEPENDENCIES=$1
 CODECOV_TOKEN=$2
 CMAKE_ARGS=$3
 
-SOURCE_DEPENDENCIES="`pwd`/.github/ci-bionic/dependencies.yaml"
-SCRIPT_BEFORE_CMAKE="`pwd`/.github/ci-bionic/before_cmake.sh"
-SCRIPT_BETWEEN_CMAKE_MAKE="`pwd`/.github/ci-bionic/between_cmake_make.sh"
-SCRIPT_AFTER_MAKE="`pwd`/.github/ci-bionic/after_make.sh"
-SCRIPT_AFTER_MAKE_TEST="`pwd`/.github/ci-bionic/after_make_test.sh"
-
 cd "$GITHUB_WORKSPACE"
 
 echo ::group::Install tools: apt
@@ -28,6 +22,14 @@ apt -y install \
   lsb-release \
   python3-pip \
   wget
+
+UBUNTU_VERSION=`lsb_release -cs`
+
+SOURCE_DEPENDENCIES="`pwd`/.github/ci-$UBUNTU_VERSION/dependencies.yaml"
+SCRIPT_BEFORE_CMAKE="`pwd`/.github/ci-$UBUNTU_VERSION/before_cmake.sh"
+SCRIPT_BETWEEN_CMAKE_MAKE="`pwd`/.github/ci-$UBUNTU_VERSION/between_cmake_make.sh"
+SCRIPT_AFTER_MAKE="`pwd`/.github/ci-$UBUNTU_VERSION/after_make.sh"
+SCRIPT_AFTER_MAKE_TEST="`pwd`/.github/ci-$UBUNTU_VERSION/after_make_test.sh"
 
 # Infer package name from GITHUB_REPOSITORY
 PACKAGE=$(echo "$GITHUB_REPOSITORY" | sed 's:.*/::' | sed 's:ign-:ignition-:')
@@ -63,14 +65,14 @@ echo ::endgroup::
 if [ -f "$SOURCE_DEPENDENCIES" ] ; then
   echo ::group::Fetch source dependencies
   mkdir -p deps/src
-  vcs import deps/src < ../.github/ci-bionic/dependencies.yaml
+  vcs import deps/src < ../.github/ci-$UBUNTU_VERSION/dependencies.yaml
   echo ::endgroup::
 fi
 
 echo ::group::Install dependencies from binaries
 apt -y install \
   $OLD_APT_DEPENDENCIES \
-  $(sort -u $(find . -iname 'packages.apt') | tr '\n' ' ')
+  $(sort -u $(find . -iname 'packages-'$UBUNTU_VERSION'.apt') | tr '\n' ' ')
 echo ::endgroup::
 
 if [ -f "$SOURCE_DEPENDENCIES" ] ; then

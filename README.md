@@ -34,7 +34,7 @@ jobs:
 Be sure to declare all apt-installable dependencies in the following file, one
 package per line.
 
-`.github/ci-bionic/packages.apt`
+`.github/ci/packages-bionic.apt`
 
 > The `apt-dependencies` input is deprecated.
 
