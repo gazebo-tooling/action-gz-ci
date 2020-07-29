@@ -7,6 +7,8 @@ OLD_APT_DEPENDENCIES=$1
 CODECOV_TOKEN=$2
 CMAKE_ARGS=$3
 
+export DEBIAN_FRONTEND="noninteractive"
+
 cd "$GITHUB_WORKSPACE"
 
 echo ::group::Install tools: apt
