@@ -19,8 +19,6 @@ inputs:
     description: '(Deprecated) Bash script to be run before cmake inside the build folder'
     required: false
     default: ''
-    required: false
-    default: ''
   script-between-cmake-make:
     description: '(Deprecated) Bash script to be run after cmake and before make inside the build folder'
     required: false
