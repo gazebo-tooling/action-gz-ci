@@ -23,18 +23,18 @@ apt -y install \
   python3-pip \
   wget
 
-UBUNTU_VERSION=`lsb_release -cs`
+SYSTEM_VERSION=`lsb_release -cs`
 
 SOURCE_DEPENDENCIES="`pwd`/.github/ci/dependencies.yaml"
-SOURCE_DEPENDENCIES_VERSIONED="`pwd`/.github/ci-$UBUNTU_VERSION/dependencies.yaml"
+SOURCE_DEPENDENCIES_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/dependencies.yaml"
 SCRIPT_BEFORE_CMAKE="`pwd`/.github/ci/before_cmake.sh"
-SCRIPT_BEFORE_CMAKE_VERSIONED="`pwd`/.github/ci-$UBUNTU_VERSION/before_cmake.sh"
+SCRIPT_BEFORE_CMAKE_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/before_cmake.sh"
 SCRIPT_BETWEEN_CMAKE_MAKE="`pwd`/.github/ci/between_cmake_make.sh"
-SCRIPT_BETWEEN_CMAKE_MAKE_VERSIONED="`pwd`/.github/ci-$UBUNTU_VERSION/between_cmake_make.sh"
+SCRIPT_BETWEEN_CMAKE_MAKE_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/between_cmake_make.sh"
 SCRIPT_AFTER_MAKE="`pwd`/.github/ci/after_make.sh"
-SCRIPT_AFTER_MAKE_VERSIONED="`pwd`/.github/ci-$UBUNTU_VERSION/after_make.sh"
+SCRIPT_AFTER_MAKE_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/after_make.sh"
 SCRIPT_AFTER_MAKE_TEST="`pwd`/.github/ci/after_make_test.sh"
-SCRIPT_AFTER_MAKE_TEST_VERSIONED="`pwd`/.github/ci-$UBUNTU_VERSION/after_make_test.sh"
+SCRIPT_AFTER_MAKE_TEST_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/after_make_test.sh"
 
 # Infer package name from GITHUB_REPOSITORY
 PACKAGE=$(echo "$GITHUB_REPOSITORY" | sed 's:.*/::' | sed 's:ign-:ignition-:')
@@ -82,7 +82,7 @@ fi
 echo ::group::Install dependencies from binaries
 apt -y install \
   $OLD_APT_DEPENDENCIES \
-  $(sort -u $(find . -iname 'packages-'$UBUNTU_VERSION'.apt' -o -iname 'packages.apt') | tr '\n' ' ')
+  $(sort -u $(find . -iname 'packages-'$SYSTEM_VERSION'.apt' -o -iname 'packages.apt') | tr '\n' ' ')
 echo ::endgroup::
 
 if [ -f "$SOURCE_DEPENDENCIES" ] || [ -f "$SOURCE_DEPENDENCIES_VERSIONED" ] ; then

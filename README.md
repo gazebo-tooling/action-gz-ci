@@ -35,7 +35,7 @@ Be sure to declare all apt-installable dependencies in the following files, one
 package per line.
 
 * `.github/ci/packages.apt` : Installed for all versions.
-* `.github/ci/packages-<ubuntu version>.apt` : where `<ubuntu version>` can be
+* `.github/ci/packages-<system version>.apt` : where `<system version>` can be
   bionic, focal, etc. Use these if you need to install different dependencies
   according to the distribution.
 
@@ -46,7 +46,7 @@ package per line.
 If you need to install dependencies from source, add a Vcstool yaml file to:
 
 * `.github/ci/dependencies.yaml` : Installed for all versions
-* `.github/ci-<ubuntu version>/dependencies.yaml` : where `<ubuntu version>`
+* `.github/ci-<system version>/dependencies.yaml` : where `<system version>`
   can be bionic, focal, etc. Use these if you need to install different
   dependencies according to the distribution.
 
@@ -60,7 +60,7 @@ Create a secret on the repository with Codecov's token, called `CODECOV_TOKEN`.
 ### Custom scripts
 
 You can add optional scripts to be run at specific times of the build. They can
-be either in `.github/ci` or `/github/ci-<ubuntu version>` as needed.
+be either in `.github/ci` or `/github/ci-<system version>` as needed.
 
 * `before_cmake.sh`: Runs before the `cmake` call
 * `between_cmake_make.sh`: Runs after the `cmake` and before `make`
