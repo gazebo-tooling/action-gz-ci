@@ -15,6 +15,22 @@ inputs:
     default: ''
   cmake-args:
     description: 'Additional CMake arguments to use when building package under test'
+  script-before-cmake:
+    description: '(Deprecated) Bash script to be run before cmake inside the build folder'
+    required: false
+    default: ''
+    required: false
+    default: ''
+  script-between-cmake-make:
+    description: '(Deprecated) Bash script to be run after cmake and before make inside the build folder'
+    required: false
+    default: ''
+  script-after-make:
+    description: '(Deprecated) Bash script to be run after make and before make test inside the build folder'
+    required: false
+    default: ''
+  script-after-make-test:
+    description: '(Deprecated) Bash script to be run after make test inside the build folder'
     required: false
     default: ''
 runs:
