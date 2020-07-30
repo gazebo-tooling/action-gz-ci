@@ -23,13 +23,18 @@ apt -y install \
   python3-pip \
   wget
 
-UBUNTU_VERSION=`lsb_release -cs`
+SYSTEM_VERSION=`lsb_release -cs`
 
-SOURCE_DEPENDENCIES="`pwd`/.github/ci-$UBUNTU_VERSION/dependencies.yaml"
-SCRIPT_BEFORE_CMAKE="`pwd`/.github/ci-$UBUNTU_VERSION/before_cmake.sh"
-SCRIPT_BETWEEN_CMAKE_MAKE="`pwd`/.github/ci-$UBUNTU_VERSION/between_cmake_make.sh"
-SCRIPT_AFTER_MAKE="`pwd`/.github/ci-$UBUNTU_VERSION/after_make.sh"
-SCRIPT_AFTER_MAKE_TEST="`pwd`/.github/ci-$UBUNTU_VERSION/after_make_test.sh"
+SOURCE_DEPENDENCIES="`pwd`/.github/ci/dependencies.yaml"
+SOURCE_DEPENDENCIES_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/dependencies.yaml"
+SCRIPT_BEFORE_CMAKE="`pwd`/.github/ci/before_cmake.sh"
+SCRIPT_BEFORE_CMAKE_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/before_cmake.sh"
+SCRIPT_BETWEEN_CMAKE_MAKE="`pwd`/.github/ci/between_cmake_make.sh"
+SCRIPT_BETWEEN_CMAKE_MAKE_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/between_cmake_make.sh"
+SCRIPT_AFTER_MAKE="`pwd`/.github/ci/after_make.sh"
+SCRIPT_AFTER_MAKE_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/after_make.sh"
+SCRIPT_AFTER_MAKE_TEST="`pwd`/.github/ci/after_make_test.sh"
+SCRIPT_AFTER_MAKE_TEST_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/after_make_test.sh"
 
 # Infer package name from GITHUB_REPOSITORY
 PACKAGE=$(echo "$GITHUB_REPOSITORY" | sed 's:.*/::' | sed 's:ign-:ignition-:')
@@ -62,20 +67,25 @@ update-alternatives \
   --slave /usr/bin/gcov gcov /usr/bin/gcov-8
 echo ::endgroup::
 
-if [ -f "$SOURCE_DEPENDENCIES" ] ; then
+if [ -f "$SOURCE_DEPENDENCIES" ] || [ -f "$SOURCE_DEPENDENCIES_VERSIONED" ] ; then
   echo ::group::Fetch source dependencies
   mkdir -p deps/src
-  vcs import deps/src < ../.github/ci-$UBUNTU_VERSION/dependencies.yaml
+  if [ -f "$SOURCE_DEPENDENCIES" ] ; then
+    vcs import deps/src < $SOURCE_DEPENDENCIES
+  fi
+  if [ -f "$SOURCE_DEPENDENCIES_VERSIONED" ] ; then
+    vcs import deps/src < $SOURCE_DEPENDENCIES_VERSIONED
+  fi
   echo ::endgroup::
 fi
 
 echo ::group::Install dependencies from binaries
 apt -y install \
   $OLD_APT_DEPENDENCIES \
-  $(sort -u $(find . -iname 'packages-'$UBUNTU_VERSION'.apt' -o -iname 'packages.apt') | tr '\n' ' ')
+  $(sort -u $(find . -iname 'packages-'$SYSTEM_VERSION'.apt' -o -iname 'packages.apt') | tr '\n' ' ')
 echo ::endgroup::
 
-if [ -f "$SOURCE_DEPENDENCIES" ] ; then
+if [ -f "$SOURCE_DEPENDENCIES" ] || [ -f "$SOURCE_DEPENDENCIES_VERSIONED" ] ; then
   echo ::group::Compile dependencies from source
   cd deps
   colcon build --symlink-install --merge-install --cmake-args -DBUILD_TESTING=false
@@ -93,9 +103,14 @@ mkdir build
 cd build
 echo ::endgroup::
 
-if [ -f "$SCRIPT_BEFORE_CMAKE" ] ; then
+if [ -f "$SCRIPT_BEFORE_CMAKE" ] || [ -f "$SCRIPT_BEFORE_CMAKE_VERSIONED" ] ; then
   echo ::group::Script before cmake
-  . $SCRIPT_BEFORE_CMAKE
+  if [ -f "$SCRIPT_BEFORE_CMAKE" ] ; then
+    . $SCRIPT_BEFORE_CMAKE
+  fi
+  if [ -f "$SCRIPT_BEFORE_CMAKE_VERSIONED" ] ; then
+    . $SCRIPT_BEFORE_CMAKE_VERSIONED
+  fi
   echo ::endgroup::
 fi
 
@@ -107,9 +122,14 @@ else
 fi
 echo ::endgroup::
 
-if [ -f "$SCRIPT_BETWEEN_CMAKE_MAKE" ] ; then
+if [ -f "$SCRIPT_BETWEEN_CMAKE_MAKE" ] || [ -f "$SCRIPT_BETWEEN_CMAKE_MAKE_VERSIONED" ] ; then
   echo ::group::Script between cmake and make
-  . $SCRIPT_BETWEEN_CMAKE_MAKE 2>&1
+  if [ -f "$SCRIPT_BETWEEN_CMAKE_MAKE" ] ; then
+    . $SCRIPT_BETWEEN_CMAKE_MAKE
+  fi
+  if [ -f "$SCRIPT_BETWEEN_CMAKE_MAKE_VERSIONED" ] ; then
+    . $SCRIPT_BETWEEN_CMAKE_MAKE_VERSIONED
+  fi
   echo ::endgroup::
 fi
 
@@ -117,9 +137,14 @@ echo ::group::make
 make
 echo ::endgroup::
 
-if [ -f "$SCRIPT_AFTER_MAKE" ] ; then
+if [ -f "$SCRIPT_AFTER_MAKE" ] || [ -f "$SCRIPT_AFTER_MAKE_VERSIONED" ] ; then
   echo ::group::Script after make
-  . $SCRIPT_AFTER_MAKE 2>&1
+  if [ -f "$SCRIPT_AFTER_MAKE" ] ; then
+    . $SCRIPT_AFTER_MAKE
+  fi
+  if [ -f "$SCRIPT_AFTER_MAKE_VERSIONED" ] ; then
+    . $SCRIPT_AFTER_MAKE_VERSIONED
+  fi
   echo ::endgroup::
 fi
 
@@ -128,9 +153,14 @@ export CTEST_OUTPUT_ON_FAILURE=1
 make test
 echo ::endgroup::
 
-if [ -f "$SCRIPT_AFTER_MAKE_TEST" ] ; then
+if [ -f "$SCRIPT_AFTER_MAKE_TEST" ] || [ -f "$SCRIPT_AFTER_MAKE_TEST_VERSIONED" ] ; then
   echo ::group::Script after make test
-  . $SCRIPT_AFTER_MAKE_TEST 2>&1
+  if [ -f "$SCRIPT_AFTER_MAKE_TEST" ] ; then
+    . $SCRIPT_AFTER_MAKE_TEST
+  fi
+  if [ -f "$SCRIPT_AFTER_MAKE_TEST_VERSIONED" ] ; then
+    . $SCRIPT_AFTER_MAKE_TEST_VERSIONED
+  fi
   echo ::endgroup::
 fi
 
