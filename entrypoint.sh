@@ -96,9 +96,10 @@ if [ -f "$SOURCE_DEPENDENCIES" ] || [ -f "$SOURCE_DEPENDENCIES_VERSIONED" ] ; th
   echo ::endgroup::
 fi
 
-echo ::group::Code check
-sh tools/code_check.sh 2>&1
-echo ::endgroup::
+# Skip codecheck for focal because we can't accommodate more than 1 cppcheck version
+# echo ::group::Code check
+# sh tools/code_check.sh 2>&1
+# echo ::endgroup::
 
 echo ::group::Build folder
 mkdir build
