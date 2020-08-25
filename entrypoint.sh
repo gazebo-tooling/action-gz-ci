@@ -168,7 +168,7 @@ if [ ! -z "$CODECOV_TOKEN" ] ; then
   echo ::group::codecov
   make coverage VERBOSE=1
 
-  curl -s https://codecov.io/bash > codecov.sh
+  curl -v -f https://codecov.io/bash > codecov.sh
 
   # disable gcov output with `-X gcovout -X gcov`
   bash codecov.sh -t $CODECOV_TOKEN -X gcovout -X gcov
