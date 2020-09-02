@@ -150,6 +150,7 @@ fi
 
 echo ::group::make test
 export CTEST_OUTPUT_ON_FAILURE=1
+cd "$GITHUB_WORKSPACE"/build
 make test
 echo ::endgroup::
 
