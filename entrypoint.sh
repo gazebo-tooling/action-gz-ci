@@ -154,6 +154,7 @@ fi
 echo ::group::make test
 export CTEST_OUTPUT_ON_FAILURE=1
 cd "$GITHUB_WORKSPACE"/build
+. colcon_command_prefix_test.sh
 make test
 echo ::endgroup::
 
