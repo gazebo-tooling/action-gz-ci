@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM osrf/ubuntu_i386:18.04
 
 COPY . .
 
