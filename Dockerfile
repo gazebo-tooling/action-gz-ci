@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM osrf/ubuntu_arm64:bionic
 
 COPY . .
 
