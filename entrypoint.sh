@@ -32,13 +32,8 @@ echo ::endgroup::
 echo ::group::Compile ignition from source
 cd workspace 
 colcon build --symlink-install --merge-install --cmake-args -DBUILD_TESTING=false
-. install/setup.sh
-cd ..
 echo ::endgroup::
 
 echo ::group::Run codecheck
-cd workspace 
 colcon build --symlink-install --merge-install --cmake-args -DBUILD_TESTING=false --cmake-target codecheck --cmake-target-skip-unavailable
-. install/setup.sh
-cd ..
 echo ::endgroup::
