@@ -21,7 +21,7 @@ echo ::endgroup::
 
 echo ::group::Fetch sources
 mkdir -p workspace/src
-vcs import workspace/src $COLLECTION_FILE
+vcs import workspace/src < $COLLECTION_FILE
 echo ::endgroup::
 
 echo ::group::Install dependencies 
