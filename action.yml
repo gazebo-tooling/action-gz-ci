@@ -5,22 +5,12 @@ inputs:
   github_token:
     description: "Token for the repo. Can be passed in using {{ secrets.GITHUB_TOKEN }}"
     required: true
-  apt-dependencies:
-    description: 'Dependencies to apt install'
+  collection-file:
+    description: 'Collection to build'
     required: false
-    default: ''
-  codecov-token:
-    description: 'Token to upload to Codecov'
-    required: false
-    default: ''
-  cmake-args:
-    description: 'Additional CMake arguments to use when building package under test'
-    required: false
-    default: ''
+    default: 'colleciton-dome.yaml'
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.apt-dependencies }}
-    - ${{ inputs.codecov-token }}
-    - ${{ inputs.cmake-args }}
+    - ${{ inputs.collection-file }}
