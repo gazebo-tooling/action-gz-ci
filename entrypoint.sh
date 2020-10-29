@@ -3,6 +3,8 @@
 set -x
 set -e
 
+EXCLUDE_APT="libignition|libsdformat"
+
 UBUNTU_VERSION=`lsb_release -cs`
 COLLECTION_FILE=$1
 export DEBIAN_FRONTEND="noninteractive"
@@ -25,8 +27,10 @@ vcs import workspace/src < $COLLECTION_FILE
 echo ::endgroup::
 
 echo ::group::Install dependencies 
-apt -y install \
-  $(sort -u $(find . -iname 'packages-'$UBUNTU_VERSION'.apt' -o -iname 'packages.apt') | tr '\n' ' ')
+ALL_PACKAGES=$(find . -iname 'packages-'$UBUNTU_VERSION'.apt' -o -iname 'packages.apt')
+ALL_PACKAGES=$(grep -Ev $EXCLUDE_APT)
+ALL_PACKAGES=$(sort -u $(ALL_PACKAGES) | tr '\n' ' ')
+apt -y install $(ALL_PACKAGES)
 echo ::endgroup::
 
 echo ::group::Compile ignition from source
