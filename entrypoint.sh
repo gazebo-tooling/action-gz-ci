@@ -94,10 +94,6 @@ if [ -f "$SOURCE_DEPENDENCIES" ] || [ -f "$SOURCE_DEPENDENCIES_VERSIONED" ] ; th
   echo ::endgroup::
 fi
 
-echo ::group::Code check
-sh tools/code_check.sh 2>&1
-echo ::endgroup::
-
 echo ::group::Build folder
 mkdir build
 cd build
@@ -119,6 +115,18 @@ if [ ! -z "$CODECOV_TOKEN" ] ; then
   cmake .. $CMAKE_ARGS -DCMAKE_BUILD_TYPE=coverage
 else
   cmake .. $CMAKE_ARGS
+fi
+echo ::endgroup::
+
+echo ::group::Code check
+# only run `make codecheck` if the Makefile has a `codecheck` target
+# (default to tools/code_check.sh otherwise)
+if grep -iq codecheck Makefile; then
+  make codecheck 2>&1
+else
+  cd ..
+  sh tools/code_check.sh 2>&1
+  cd build
 fi
 echo ::endgroup::
 
