@@ -16,9 +16,9 @@ apt -y install \
   cmake \
   cppcheck \
   curl \
-  g++-8 \
   git \
   gnupg \
+  lcov \
   lsb-release \
   python3-pip \
   wget
@@ -51,20 +51,6 @@ echo ::endgroup::
 
 echo ::group::Install tools: pip
 pip3 install -U pip vcstool colcon-common-extensions
-echo ::endgroup::
-
-echo ::group::Install tools: source
-git clone https://github.com/linux-test-project/lcov.git -b v1.14 2>&1
-cd lcov
-make install
-cd ..
-echo ::endgroup::
-
-echo ::group::GCC 8
-update-alternatives \
-  --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 \
-  --slave /usr/bin/g++ g++ /usr/bin/g++-8 \
-  --slave /usr/bin/gcov gcov /usr/bin/gcov-8
 echo ::endgroup::
 
 if [ -f "$SOURCE_DEPENDENCIES" ] || [ -f "$SOURCE_DEPENDENCIES_VERSIONED" ] ; then

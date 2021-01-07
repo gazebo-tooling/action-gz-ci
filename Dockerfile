@@ -1,4 +1,4 @@
-FROM ghcr.io/ignition-tooling/ign-ubuntu:citadel-bionic
+FROM ghcr.io/ignition-tooling/ign-ubuntu:edifice-focal
 
 COPY . .
 
