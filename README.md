@@ -5,10 +5,10 @@ Compile and run tests for Ignition libraries.
 ## Usage
 
 Add the following file to an Ignition repository:
-`.github/workflows/ci-bionic.yml`
+`.github/workflows/ci.yml`
 
 ```
-name: Ubuntu Bionic CI
+name: Ubuntu CI
 
 on: [push, pull_request]
 
@@ -19,9 +19,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Bionic CI
+      - name: Compile and test
         id: ci
-        uses: ignition-tooling/ubuntu-bionic-ci-action@v1
+        uses: ignition-tooling/ubuntu-ci-action@master
         with:
           codecov-token: ${{ secrets.CODECOV_TOKEN }}
           cmake-args: '-DBUILD_TESTING=1'
