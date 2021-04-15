@@ -43,10 +43,15 @@ PACKAGE=$(echo "$GITHUB_REPOSITORY" | sed 's:.*/::' | sed 's:ign-:ignition-:')
 wget https://raw.githubusercontent.com/ignition-tooling/release-tools/master/jenkins-scripts/tools/detect_cmake_major_version.py
 PACKAGE_MAJOR_VERSION=$(python3 detect_cmake_major_version.py "$GITHUB_WORKSPACE"/CMakeLists.txt)
 
+echo "Run ENV inside entryopoint.sh"
+env
+
 if [ ! -z "$CODECOV_TOKEN" ] ; then
   echo ::group::codecov
 
   curl -v -f https://codecov.io/bash > codecov.sh
+  echo "Run ENV inside entryopoint.sh just before calling codecov.sh"
+  env
   bash codecov.sh -t $CODECOV_TOKEN -X gcovout -X gcov || true
   echo ::endgroup::
 fi
