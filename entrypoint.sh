@@ -45,6 +45,8 @@ PACKAGE_MAJOR_VERSION=$(python3 detect_cmake_major_version.py "$GITHUB_WORKSPACE
 
 echo "Run ENV inside entryopoint.sh"
 env
+echo "SECRET"
+echo $OTHER_RANDOM_SECRET
 
 if [ ! -z "$CODECOV_TOKEN" ] ; then
   echo ::group::codecov
