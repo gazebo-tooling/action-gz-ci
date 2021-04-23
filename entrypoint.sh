@@ -187,9 +187,9 @@ if [ -n "$CODECOV_ENABLED" ] ; then
   # Download codecov, check hash
   curl -s https://codecov.io/bash > codecov
   curl -s https://codecov.io/env > env # needed to make the checksum work
-  export VERSION=$(grep 'VERSION=\"[0-9\.]*\"' codecov | cut -d'"' -f2)
-  shasum -a 512 -c  <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA521SUM") ||
-    shasum -a 512 -c <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA512SUM")
+  VERSION=$(grep 'VERSION=\"[0-9\.]*\"' codecov | cut -d'"' -f2)
+  curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA512SUM" > hash_file
+  shasum -a 512 -c hash_file
   # disable gcov output with `-X gcovout -X gcov`
   private_repo_token=
   [ -n "${CODECOV_TOKEN}" ] && private_repo_token="-t $CODECOV_TOKEN"
