@@ -118,7 +118,7 @@ if [ -f "$SCRIPT_BEFORE_CMAKE" ] || [ -f "$SCRIPT_BEFORE_CMAKE_VERSIONED" ] ; th
 fi
 
 echo ::group::cmake
-if [ ! -z "$CODECOV_TOKEN" ] ; then
+if [ -n "$CODECOV_ENABLED" ] && ${CODECOV_ENABLED} ; then
   cmake .. $CMAKE_ARGS -DCMAKE_BUILD_TYPE=coverage
 else
   cmake .. $CMAKE_ARGS
@@ -180,7 +180,7 @@ if [ -f "$SCRIPT_AFTER_MAKE_TEST" ] || [ -f "$SCRIPT_AFTER_MAKE_TEST_VERSIONED" 
   echo ::endgroup::
 fi
 
-if [ -n "$CODECOV_ENABLED" ] ; then
+if [ -n "$CODECOV_ENABLED" ] && ${CODECOV_ENABLED} ; then
   echo ::group::codecov
   make coverage VERBOSE=1
 
