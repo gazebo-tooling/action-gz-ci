@@ -5,8 +5,12 @@ set -e
 
 OLD_APT_DEPENDENCIES=$1
 CODECOV_ENABLED=$2
-CODECOV_TOKEN=$3
-CMAKE_ARGS=$4
+CODECOV_TOKEN_PRIVATE_REPOS=$3
+DEPRECATED_CODECOV_TOKEN=$4
+CMAKE_ARGS=$5
+
+# keep the previous behaviour of running codecov if old token is set
+[ -n "${DEPRECATED_CODECOV_TOKEN}" ] && CODECOV_ENABLED=1
 
 export DEBIAN_FRONTEND="noninteractive"
 
