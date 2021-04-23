@@ -4,8 +4,9 @@ set -x
 set -e
 
 OLD_APT_DEPENDENCIES=$1
-CODECOV_TOKEN=$2
-CMAKE_ARGS=$3
+CODECOV_ENABLED=$2
+CODECOV_TOKEN=$3
+CMAKE_ARGS=$4
 
 export DEBIAN_FRONTEND="noninteractive"
 
@@ -175,13 +176,19 @@ if [ -f "$SCRIPT_AFTER_MAKE_TEST" ] || [ -f "$SCRIPT_AFTER_MAKE_TEST_VERSIONED" 
   echo ::endgroup::
 fi
 
-if [ ! -z "$CODECOV_TOKEN" ] ; then
+if [ -n "$CODECOV_ENABLED" ] ; then
   echo ::group::codecov
   make coverage VERBOSE=1
 
-  curl -v -f https://codecov.io/bash > codecov.sh
-
+  # Download codecov, check hash
+  curl -s https://codecov.io/bash > codecov
+  curl -s https://codecov.io/env > env # needed to make the checksum work
+  export VERSION=$(grep 'VERSION=\"[0-9\.]*\"' codecov | cut -d'"' -f2)
+  shasum -a 512 -c  <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA521SUM") ||
+    shasum -a 512 -c <(curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA512SUM")
   # disable gcov output with `-X gcovout -X gcov`
-  bash codecov.sh -t $CODECOV_TOKEN -X gcovout -X gcov
+  private_repo_token=
+  [ -n "${CODECOV_TOKEN}" ] && private_repo_token="-t $CODECOV_TOKEN"
+  bash codecov ${private_repo_token} -X gcovout -X gcov
   echo ::endgroup::
 fi

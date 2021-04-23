@@ -9,8 +9,12 @@ inputs:
     description: 'Dependencies to apt install'
     required: false
     default: ''
+  codecov-enabled:
+    description: 'Prepare the build for coverage and execute codecov'
+    required: false
+    default: ''
   codecov-token:
-    description: 'Token to upload to Codecov'
+    description: 'Token to upload to Codecov. Only for private repositories'
     required: false
     default: ''
   cmake-args:
@@ -38,5 +42,6 @@ runs:
   image: 'Dockerfile'
   args:
     - ${{ inputs.apt-dependencies }}
+    - ${{ inputs.codecov-enabled }}
     - ${{ inputs.codecov-token }}
     - ${{ inputs.cmake-args }}
