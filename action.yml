@@ -9,19 +9,10 @@ inputs:
     description: 'Dependencies to apt install'
     required: false
     default: ''
-  codecov-enabled:
-    description: 'Prepare the build for coverage and execute codecov'
-    required: false
-    default: ''
-  codecov-token-private-repos:
-    description: 'Token to upload to codecov in private repositories. Public repos do not need it'
-    required: false
-    default: ''
   codecov-token:
-    description: 'DEPRECATED: use codecov-token-private if using private repositories'
+    description: 'Token to upload to Codecov'
     required: false
     default: ''
-    deprecationMessage: 'Public repositories do not need codecov-token, use codecov-enabled to run codecov on Public repositories. To facilitate transition codecov is enabled but not using any token'
   cmake-args:
     description: 'Additional CMake arguments to use when building package under test'
     required: false
@@ -47,7 +38,5 @@ runs:
   image: 'Dockerfile'
   args:
     - ${{ inputs.apt-dependencies }}
-    - ${{ inputs.codecov-enabled }}
-    - ${{ inputs.codecov-token-private-repos }}
     - ${{ inputs.codecov-token }}
     - ${{ inputs.cmake-args }}

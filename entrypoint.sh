@@ -4,13 +4,8 @@ set -x
 set -e
 
 OLD_APT_DEPENDENCIES=$1
-CODECOV_ENABLED=$2
-CODECOV_TOKEN_PRIVATE_REPOS=$3
-DEPRECATED_CODECOV_TOKEN=$4
-CMAKE_ARGS=$5
-
-# keep the previous behaviour of running codecov if old token is set
-[ -n "${DEPRECATED_CODECOV_TOKEN}" ] && CODECOV_ENABLED=1
+CODECOV_TOKEN=$2
+CMAKE_ARGS=$3
 
 export DEBIAN_FRONTEND="noninteractive"
 
@@ -118,7 +113,7 @@ if [ -f "$SCRIPT_BEFORE_CMAKE" ] || [ -f "$SCRIPT_BEFORE_CMAKE_VERSIONED" ] ; th
 fi
 
 echo ::group::cmake
-if [ -n "$CODECOV_ENABLED" ] && ${CODECOV_ENABLED} ; then
+if [ ! -z "$CODECOV_TOKEN" ] ; then
   cmake .. $CMAKE_ARGS -DCMAKE_BUILD_TYPE=coverage
 else
   cmake .. $CMAKE_ARGS
@@ -180,19 +175,13 @@ if [ -f "$SCRIPT_AFTER_MAKE_TEST" ] || [ -f "$SCRIPT_AFTER_MAKE_TEST_VERSIONED" 
   echo ::endgroup::
 fi
 
-if [ -n "$CODECOV_ENABLED" ] && ${CODECOV_ENABLED} ; then
+if [ ! -z "$CODECOV_TOKEN" ] ; then
   echo ::group::codecov
   make coverage VERBOSE=1
 
-  # Download codecov, check hash
-  curl -s https://codecov.io/bash > codecov
-  curl -s https://codecov.io/env > env # needed to make the checksum work
-  VERSION=$(grep 'VERSION=\"[0-9\.]*\"' codecov | cut -d'"' -f2)
-  curl -s "https://raw.githubusercontent.com/codecov/codecov-bash/${VERSION}/SHA512SUM" > hash_file
-  shasum -a 512 -c hash_file
+  curl -v -f https://codecov.io/bash > codecov.sh
+
   # disable gcov output with `-X gcovout -X gcov`
-  private_repo_token=
-  [ -n "${CODECOV_TOKEN}" ] && private_repo_token="-t $CODECOV_TOKEN"
-  bash codecov ${private_repo_token} -X gcovout -X gcov
+  bash codecov.sh -t $CODECOV_TOKEN -X gcovout -X gcov
   echo ::endgroup::
 fi
