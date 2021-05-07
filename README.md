@@ -69,7 +69,7 @@ repositories:
 
 When we install a dependency from binaries, it brings all its own
 dependencies along with it. But when we build it from source, we need to
-manually install these indirect dependencies through `packages.apt. In
+manually install these indirect dependencies through `packages.apt`. In
 the example above, this means appending `ign-rendering`'s dependencies like
 `libogre-2.1-dev` to the other dependencies already in `ign-gui`'s
 `packages.apt`.
