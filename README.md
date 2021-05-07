@@ -39,19 +39,40 @@ package per line.
   bionic, focal, etc. Use these if you need to install different dependencies
   according to the distribution.
 
-> The `apt-dependencies` input is deprecated.
+See some examples
+[here](https://github.com/ignitionrobotics/ign-gazebo/tree/ign-gazebo5/.github/ci).
+
+> The `apt-dependencies` input is deprecated. Use the `.apt` files instead.
 
 #### Source dependencies
 
-If you need to install dependencies from source, add a Vcstool yaml file to:
+If you need to install dependencies from source, add a
+[vcstool](https://github.com/dirk-thomas/vcstool) yaml file to:
 
 * `.github/ci/dependencies.yaml` : Installed for all versions
 * `.github/ci-<system version>/dependencies.yaml` : where `<system version>`
   can be bionic, focal, etc. Use these if you need to install different
   dependencies according to the distribution.
 
-Dependencies will be built using `colcon`. Be sure to add the apt dependencies
-of dependencies build from source to `apt-dependencies`.
+Dependencies are built using `colcon`.
+
+For example, to build a custom `ign-rendering` branch on `ign-gui`, add
+`.github/ci/dependencies.yaml`:
+
+```.yaml
+repositories:
+  ign-rendering:
+    type: git
+    url: https://github.com/ignitionrobotics/ign-rendering
+    version: branch_name
+```
+
+When we install a dependency from binaries, it brings all its own
+dependencies along with it. But when we build it from source, we need to
+manually install these indirect dependencies through `packages.apt. In
+the example above, this means appending `ign-rendering`'s dependencies like
+`libogre-2.1-dev` to the other dependencies already in `ign-gui`'s
+`packages.apt`.
 
 ### Codecov
 
