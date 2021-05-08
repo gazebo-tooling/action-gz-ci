@@ -23,7 +23,7 @@ jobs:
         id: ci
         uses: ignition-tooling/ubuntu-ci-action@master
         with:
-          codecov-token: ${{ secrets.CODECOV_TOKEN }}
+          codecov-enabled: true
           cmake-args: '-DBUILD_TESTING=1'
 ```
 
@@ -57,7 +57,8 @@ If you need to install dependencies from source, add a
 Dependencies are built using `colcon`.
 
 For example, to build a custom `ign-rendering` branch on `ign-gui`, add
-`.github/ci/dependencies.yaml`:
+`.github/ci/dependencies.yaml` (replacing `branch_name` with the
+`ign-rendering` branch you want to use):
 
 ```.yaml
 repositories:
@@ -76,7 +77,17 @@ the example above, this means appending `ign-rendering`'s dependencies like
 
 ### Codecov
 
-Create a secret on the repository with Codecov's token, called `CODECOV_TOKEN`.
+For public repositories, Codecov can be enabled with `codecov-enabled: true`.
+
+For private repositories, create a secret on the repository with Codecov's
+token and add it through the `codecov-token-private-repos` input. For example:
+
+```
+        with:
+          codecov-token-private-repos: ${{ secrets.CODECOV_TOKEN }}
+```
+
+> The `codecov-token` input has been deprecated, use one of the approaches above.
 
 ### Custom scripts
 
