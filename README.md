@@ -24,6 +24,7 @@ jobs:
         uses: ignition-tooling/ubuntu-ci-action@master
         with:
           codecov-enabled: true
+          doxygen-enabled: true
           cmake-args: '-DBUILD_TESTING=1'
 ```
 
@@ -107,3 +108,8 @@ build folder before exiting the script.
 The `cmake-args` can be used to pass additional CMake arguments to the build.
 If building with codecov is enabled, it is not possible to override the build type,
 which will always be `CMAKE_BUILD_TYPE=coverage`.
+
+### Doxygen
+
+Doxygen checks can be enabled with `doxygen-enabled: true`. This will make CI
+fail if there is code not documented properly.
