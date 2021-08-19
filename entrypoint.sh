@@ -1,4 +1,4 @@
-#!/bin/sh -l
+#!/bin/bash -l
 
 set -x
 set -e
@@ -8,6 +8,7 @@ CODECOV_ENABLED=$2
 CODECOV_TOKEN_PRIVATE_REPOS=$3
 DEPRECATED_CODECOV_TOKEN=$4
 CMAKE_ARGS=$5
+DOXYGEN_ENABLED=$6
 
 # keep the previous behaviour of running codecov if old token is set
 [ -n "${DEPRECATED_CODECOV_TOKEN}" ] && CODECOV_ENABLED=1
@@ -23,6 +24,7 @@ apt -y install \
   cmake \
   cppcheck \
   curl \
+  doxygen \
   g++-8 \
   git \
   gnupg \
@@ -136,6 +138,13 @@ else
   cd build
 fi
 echo ::endgroup::
+
+if [ -n "$DOXYGEN_ENABLED" ] && ${DOXYGEN_ENABLED} ; then
+  echo ::group::Documentation check
+  make doc 2>&1
+  bash <(curl -s https://raw.githubusercontent.com/ignitionrobotics/ign-cmake/ign-cmake2/tools/doc_check.sh)
+  echo ::endgroup::
+fi
 
 if [ -f "$SCRIPT_BETWEEN_CMAKE_MAKE" ] || [ -f "$SCRIPT_BETWEEN_CMAKE_MAKE_VERSIONED" ] ; then
   echo ::group::Script between cmake and make
