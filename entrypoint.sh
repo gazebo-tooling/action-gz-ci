@@ -9,6 +9,7 @@ CODECOV_TOKEN_PRIVATE_REPOS=$3
 DEPRECATED_CODECOV_TOKEN=$4
 CMAKE_ARGS=$5
 DOXYGEN_ENABLED=$6
+TESTS_ENABLED=$7
 
 # keep the previous behaviour of running codecov if old token is set
 [ -n "${DEPRECATED_CODECOV_TOKEN}" ] && CODECOV_ENABLED=1
@@ -129,10 +130,10 @@ echo ::endgroup::
 
 echo ::group::Code check
 # only run `make codecheck` if the Makefile has a `codecheck` target
-# (default to tools/code_check.sh otherwise)
+# (try tools/code_check.sh otherwise)
 if grep -iq codecheck Makefile; then
   make codecheck 2>&1
-else
+elif test -f "tools/code_check.sh"; then
   cd ..
   sh tools/code_check.sh 2>&1
   cd build
@@ -172,11 +173,13 @@ if [ -f "$SCRIPT_AFTER_MAKE" ] || [ -f "$SCRIPT_AFTER_MAKE_VERSIONED" ] ; then
   echo ::endgroup::
 fi
 
-echo ::group::make test
-export CTEST_OUTPUT_ON_FAILURE=1
-cd "$GITHUB_WORKSPACE"/build
-make test
-echo ::endgroup::
+if [ -n "$TESTS_ENABLED" ] && ${TESTS_ENABLED} ; then
+  echo ::group::make test
+  export CTEST_OUTPUT_ON_FAILURE=1
+  cd "$GITHUB_WORKSPACE"/build
+  make test
+  echo ::endgroup::
+fi
 
 if [ -f "$SCRIPT_AFTER_MAKE_TEST" ] || [ -f "$SCRIPT_AFTER_MAKE_TEST_VERSIONED" ] ; then
   echo ::group::Script after make test

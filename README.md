@@ -113,3 +113,7 @@ which will always be `CMAKE_BUILD_TYPE=coverage`.
 
 Doxygen checks can be enabled with `doxygen-enabled: true`. This will make CI
 fail if there is code not documented properly.
+
+### Tests
+
+Tests will run by default, and can be disabled with `tests-enabled: false`.

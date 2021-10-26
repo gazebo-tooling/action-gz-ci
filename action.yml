@@ -46,6 +46,10 @@ inputs:
     description: 'Run doxygen documentation checks.'
     required: false
     default: ''
+  tests-enabled:
+    description: 'Run tests.'
+    required: false
+    default: 'true'
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -56,3 +60,4 @@ runs:
     - ${{ inputs.codecov-token }}
     - ${{ inputs.cmake-args }}
     - ${{ inputs.doxygen-enabled }}
+    - ${{ inputs.tests-enabled }}
