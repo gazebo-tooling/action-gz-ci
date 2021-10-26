@@ -130,10 +130,10 @@ echo ::endgroup::
 
 echo ::group::Code check
 # only run `make codecheck` if the Makefile has a `codecheck` target
-# (default to tools/code_check.sh otherwise)
+# (try tools/code_check.sh otherwise)
 if grep -iq codecheck Makefile; then
   make codecheck 2>&1
-else
+elif test -f "tools/code_check.sh"; then
   cd ..
   sh tools/code_check.sh 2>&1
   cd build
