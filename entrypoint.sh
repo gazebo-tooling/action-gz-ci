@@ -1,4 +1,4 @@
-#!/bin/sh -l
+#!/bin/bash -l
 
 set -x
 set -e
@@ -8,6 +8,8 @@ CODECOV_ENABLED=$2
 CODECOV_TOKEN_PRIVATE_REPOS=$3
 DEPRECATED_CODECOV_TOKEN=$4
 CMAKE_ARGS=$5
+DOXYGEN_ENABLED=$6
+TESTS_ENABLED=$7
 
 # keep the previous behaviour of running codecov if old token is set
 [ -n "${DEPRECATED_CODECOV_TOKEN}" ] && CODECOV_ENABLED=1
@@ -23,6 +25,7 @@ apt -y install \
   cmake \
   cppcheck \
   curl \
+  doxygen \
   g++-8 \
   git \
   gnupg \
@@ -30,18 +33,18 @@ apt -y install \
   python3-pip \
   wget
 
-UBUNTU_VERSION=`lsb_release -cs`
+SYSTEM_VERSION=`lsb_release -cs`
 
 SOURCE_DEPENDENCIES="`pwd`/.github/ci/dependencies.yaml"
-SOURCE_DEPENDENCIES_VERSIONED="`pwd`/.github/ci-$UBUNTU_VERSION/dependencies.yaml"
+SOURCE_DEPENDENCIES_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/dependencies.yaml"
 SCRIPT_BEFORE_CMAKE="`pwd`/.github/ci/before_cmake.sh"
-SCRIPT_BEFORE_CMAKE_VERSIONED="`pwd`/.github/ci-$UBUNTU_VERSION/before_cmake.sh"
+SCRIPT_BEFORE_CMAKE_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/before_cmake.sh"
 SCRIPT_BETWEEN_CMAKE_MAKE="`pwd`/.github/ci/between_cmake_make.sh"
-SCRIPT_BETWEEN_CMAKE_MAKE_VERSIONED="`pwd`/.github/ci-$UBUNTU_VERSION/between_cmake_make.sh"
+SCRIPT_BETWEEN_CMAKE_MAKE_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/between_cmake_make.sh"
 SCRIPT_AFTER_MAKE="`pwd`/.github/ci/after_make.sh"
-SCRIPT_AFTER_MAKE_VERSIONED="`pwd`/.github/ci-$UBUNTU_VERSION/after_make.sh"
+SCRIPT_AFTER_MAKE_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/after_make.sh"
 SCRIPT_AFTER_MAKE_TEST="`pwd`/.github/ci/after_make_test.sh"
-SCRIPT_AFTER_MAKE_TEST_VERSIONED="`pwd`/.github/ci-$UBUNTU_VERSION/after_make_test.sh"
+SCRIPT_AFTER_MAKE_TEST_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/after_make_test.sh"
 
 # Infer package name from GITHUB_REPOSITORY
 PACKAGE=$(echo "$GITHUB_REPOSITORY" | sed 's:.*/::' | sed 's:ign-:ignition-:')
@@ -82,7 +85,7 @@ fi
 echo ::group::Install dependencies from binaries
 apt -y install \
   $OLD_APT_DEPENDENCIES \
-  $(sort -u $(find . -iname 'packages-'$UBUNTU_VERSION'.apt' -o -iname 'packages.apt') | tr '\n' ' ')
+  $(sort -u $(find . -iname 'packages-'$SYSTEM_VERSION'.apt' -o -iname 'packages.apt') | tr '\n' ' ')
 echo ::endgroup::
 
 if [ -f "$SOURCE_DEPENDENCIES" ] || [ -f "$SOURCE_DEPENDENCIES_VERSIONED" ] ; then
@@ -93,11 +96,6 @@ if [ -f "$SOURCE_DEPENDENCIES" ] || [ -f "$SOURCE_DEPENDENCIES_VERSIONED" ] ; th
   cd ..
   echo ::endgroup::
 fi
-
-# Skip codecheck for focal because we can't accommodate more than 1 cppcheck version
-# echo ::group::Code check
-# sh tools/code_check.sh 2>&1
-# echo ::endgroup::
 
 echo ::group::Build folder
 mkdir build
@@ -122,6 +120,15 @@ else
   cmake .. $CMAKE_ARGS
 fi
 echo ::endgroup::
+
+# Skip codecheck for focal because we can't accommodate more than 1 cppcheck version
+
+if [ -n "$DOXYGEN_ENABLED" ] && ${DOXYGEN_ENABLED} ; then
+  echo ::group::Documentation check
+  make doc 2>&1
+  bash <(curl -s https://raw.githubusercontent.com/ignitionrobotics/ign-cmake/ign-cmake2/tools/doc_check.sh)
+  echo ::endgroup::
+fi
 
 if [ -f "$SCRIPT_BETWEEN_CMAKE_MAKE" ] || [ -f "$SCRIPT_BETWEEN_CMAKE_MAKE_VERSIONED" ] ; then
   echo ::group::Script between cmake and make
@@ -149,11 +156,13 @@ if [ -f "$SCRIPT_AFTER_MAKE" ] || [ -f "$SCRIPT_AFTER_MAKE_VERSIONED" ] ; then
   echo ::endgroup::
 fi
 
-echo ::group::make test
-export CTEST_OUTPUT_ON_FAILURE=1
-cd "$GITHUB_WORKSPACE"/build
-make test
-echo ::endgroup::
+if [ -n "$TESTS_ENABLED" ] && ${TESTS_ENABLED} ; then
+  echo ::group::make test
+  export CTEST_OUTPUT_ON_FAILURE=1
+  cd "$GITHUB_WORKSPACE"/build
+  make test
+  echo ::endgroup::
+fi
 
 if [ -f "$SCRIPT_AFTER_MAKE_TEST" ] || [ -f "$SCRIPT_AFTER_MAKE_TEST_VERSIONED" ] ; then
   echo ::group::Script after make test
@@ -170,7 +179,7 @@ if [ -n "$CODECOV_ENABLED" ] && ${CODECOV_ENABLED} ; then
   echo ::group::codecov
   make coverage VERBOSE=1
 
- # Download codecov, check hash
+  # Download codecov, check hash
   curl -s https://codecov.io/bash > codecov
   curl -s https://codecov.io/env > env # needed to make the checksum work
   VERSION=$(grep 'VERSION=\"[0-9\.]*\"' codecov | cut -d'"' -f2)
