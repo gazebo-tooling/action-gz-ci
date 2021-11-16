@@ -121,7 +121,7 @@ else
 fi
 echo ::endgroup::
 
-# Skip codecheck for focal because we can't accommodate more than 1 cppcheck version
+# Skip codecheck for jammy because we can't accommodate more than 1 cppcheck version
 
 if [ -n "$DOXYGEN_ENABLED" ] && ${DOXYGEN_ENABLED} ; then
   echo ::group::Documentation check
