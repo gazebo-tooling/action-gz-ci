@@ -10,6 +10,8 @@ DEPRECATED_CODECOV_TOKEN=$4
 CMAKE_ARGS=$5
 DOXYGEN_ENABLED=$6
 TESTS_ENABLED=$7
+CPPLINT_ENABLED=$8
+CPPCHECK_ENABLED=$9
 
 # keep the previous behaviour of running codecov if old token is set
 [ -n "${DEPRECATED_CODECOV_TOKEN}" ] && CODECOV_ENABLED=1
@@ -121,7 +123,21 @@ else
 fi
 echo ::endgroup::
 
-# Skip codecheck for focal because we can't accommodate more than 1 cppcheck version
+echo ::group::cpplint
+if [ -n "$CPPLINT_ENABLED" ] && ${CPPLINT_ENABLED} ; then
+  if grep -iq cpplint Makefile; then
+    make cpplint 2>&1
+  fi
+fi
+echo ::endgroup
+
+echo ::group::cppcheck
+if [ -n "$CPPCHECK_ENABLED" ] && ${CPPCHECK_ENABLED} ; then
+  if grep -iq cppcheck Makefile; then
+    make cppcheck 2>&1
+  fi
+fi
+echo ::endgroup
 
 if [ -n "$DOXYGEN_ENABLED" ] && ${DOXYGEN_ENABLED} ; then
   echo ::group::Documentation check
