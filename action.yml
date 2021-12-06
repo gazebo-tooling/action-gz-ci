@@ -34,6 +34,14 @@ inputs:
     description: 'Run tests.'
     required: false
     default: 'true'
+  cpplint-enabled:
+    description: 'Run cpplint'
+    required: false
+    default: 'false'
+  cppcheck-enabled:
+    description: 'Run cppcheck'
+    required: false
+    default: 'false'
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -45,3 +53,5 @@ runs:
     - ${{ inputs.cmake-args }}
     - ${{ inputs.doxygen-enabled }}
     - ${{ inputs.tests-enabled }}
+    - ${{ inputs.cpplint-enabled }}
+    - ${{ inputs.cppcheck-enabled }}
