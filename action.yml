@@ -36,7 +36,7 @@ inputs:
     default: 'true'
   cpplint-enabled:
     description: 'Run cpplint'
-    required: false
+    required: true
     default: 'false'
   cppcheck-enabled:
     description: 'Run cppcheck'
