@@ -56,7 +56,16 @@ PACKAGE=$(echo "$GITHUB_REPOSITORY" | sed 's:.*/::' | sed 's:ign-:ignition-:')
 wget https://raw.githubusercontent.com/ignition-tooling/release-tools/master/jenkins-scripts/tools/detect_cmake_major_version.py
 PACKAGE_MAJOR_VERSION=$(python3 detect_cmake_major_version.py "$GITHUB_WORKSPACE"/CMakeLists.txt)
 
-git clone --depth 1 https://github.com/osrf/gzdev /tmp/gzdev
+# Check for ci_matching_branch in gzdev
+wget https://raw.githubusercontent.com/ignition-tooling/release-tools/master/jenkins-scripts/tools/detect_ci_matching_branch.py
+if python3 detect_ci_matching_branch.py "${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"; then
+  GZDEV_TRY_BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
+fi
+
+git clone https://github.com/osrf/gzdev /tmp/gzdev
+if [ -n "${GZDEV_TRY_BRANCH}" ]; then
+  git -C /tmp/gzdev checkout ${GZDEV_TRY_BRANCH} || true
+fi
 pip3 install -r /tmp/gzdev/requirements.txt
 /tmp/gzdev/gzdev.py \
   repository enable --project="${PACKAGE}${PACKAGE_MAJOR_VERSION}"
