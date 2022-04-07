@@ -27,13 +27,16 @@ apt -y install \
   cmake \
   cppcheck \
   curl \
-  doxygen \
   git \
   gnupg \
   lcov \
   lsb-release \
   python3-pip \
   wget
+
+if [ -n "$DOXYGEN_ENABLED" ] && ${DOXYGEN_ENABLED} ; then
+  apt -y install doxygen
+fi
 
 SYSTEM_VERSION=`lsb_release -cs`
 
