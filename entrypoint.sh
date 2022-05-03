@@ -38,6 +38,11 @@ if [ -n "$DOXYGEN_ENABLED" ] && ${DOXYGEN_ENABLED} ; then
   apt -y install doxygen
 fi
 
+# Add the workspace as a safe directory in the global git config. This ensures that any 
+# even if the workspace is owned by another user, git commands still work.
+# See https://github.com/actions/checkout/issues/760
+git config --global --add safe.directory $GITHUB_WORKSPACE
+
 SYSTEM_VERSION=`lsb_release -cs`
 
 SOURCE_DEPENDENCIES="`pwd`/.github/ci/dependencies.yaml"
@@ -209,6 +214,6 @@ if [ -n "$CODECOV_ENABLED" ] && ${CODECOV_ENABLED} ; then
   # disable gcov output with `-X gcovout -X gcov`
   private_repo_token=
   [ -n "${CODECOV_TOKEN}" ] && private_repo_token="-t $CODECOV_TOKEN"
-  bash codecov ${private_repo_token} -X gcovout -X gcov -R "$GITHUB_WORKSPACE"
+  bash codecov ${private_repo_token} -X gcovout -X gcov
   echo ::endgroup::
 fi
