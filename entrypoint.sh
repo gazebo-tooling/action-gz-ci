@@ -209,6 +209,6 @@ if [ -n "$CODECOV_ENABLED" ] && ${CODECOV_ENABLED} ; then
   # disable gcov output with `-X gcovout -X gcov`
   private_repo_token=
   [ -n "${CODECOV_TOKEN}" ] && private_repo_token="-t $CODECOV_TOKEN"
-  bash codecov ${private_repo_token} -X gcovout -X gcov
+  bash codecov ${private_repo_token} -X gcovout -X gcov -R "$GITHUB_WORKSPACE"
   echo ::endgroup::
 fi
