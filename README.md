@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Compile and test
         id: ci
-        uses: ignition-tooling/ubuntu-ci-action@jammy
+        uses: gazebo-tooling/ubuntu-ci-action@jammy
         with:
           codecov-enabled: true
           doxygen-enabled: true

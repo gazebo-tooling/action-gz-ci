@@ -54,11 +54,11 @@ SCRIPT_AFTER_MAKE_TEST_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/after_make_te
 # Infer package name from GITHUB_REPOSITORY
 # TODO(jrivero) remove ign renaming after migrate all projects to gazebo-
 PACKAGE=$(echo "$GITHUB_REPOSITORY" | sed 's:.*/::' | sed 's:ign-:ignition-:' | sed 's:gz-:gazebo-:')
-wget https://raw.githubusercontent.com/ignition-tooling/release-tools/master/jenkins-scripts/tools/detect_cmake_major_version.py
+wget https://raw.githubusercontent.com/gazebo-tooling/release-tools/master/jenkins-scripts/tools/detect_cmake_major_version.py
 PACKAGE_MAJOR_VERSION=$(python3 detect_cmake_major_version.py "$GITHUB_WORKSPACE"/CMakeLists.txt)
 
 # Check for ci_matching_branch in gzdev
-wget https://raw.githubusercontent.com/ignition-tooling/release-tools/master/jenkins-scripts/tools/detect_ci_matching_branch.py
+wget https://raw.githubusercontent.com/gazebo-tooling/release-tools/master/jenkins-scripts/tools/detect_ci_matching_branch.py
 if python3 detect_ci_matching_branch.py "${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"; then
   GZDEV_TRY_BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
 fi
