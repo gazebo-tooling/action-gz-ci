@@ -42,6 +42,8 @@ SYSTEM_VERSION=`lsb_release -cs`
 
 SOURCE_DEPENDENCIES="`pwd`/.github/ci/dependencies.yaml"
 SOURCE_DEPENDENCIES_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/dependencies.yaml"
+SCRIPT_BEFORE_DEP_COMPILATION="`pwd`/.github/ci/before_dep_compilation.sh"
+SCRIPT_BEFORE_DEP_COMPILATION_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/before_dep_compilation.sh"
 SCRIPT_BEFORE_CMAKE="`pwd`/.github/ci/before_cmake.sh"
 SCRIPT_BEFORE_CMAKE_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/before_cmake.sh"
 SCRIPT_BETWEEN_CMAKE_MAKE="`pwd`/.github/ci/between_cmake_make.sh"
@@ -94,6 +96,17 @@ apt -y install \
   $OLD_APT_DEPENDENCIES \
   $(sort -u $(find . -iname 'packages-'$SYSTEM_VERSION'.apt' -o -iname 'packages.apt') | tr '\n' ' ')
 echo ::endgroup::
+
+if [ -f "$SCRIPT_BEFORE_DEP_COMPILATION" ] || [ -f "$SCRIPT_BEFORE_DEP_COMPILATION_VERSIONED" ] ; then
+  echo ::group::Script before dependencies compilation from source
+  if [ -f "$SCRIPT_BEFORE_DEP_COMPILATION" ] ; then
+    . $SCRIPT_BEFORE_DEP_COMPILATION
+  fi
+  if [ -f "$SCRIPT_BEFORE_DEP_COMPILATION_VERSIONED" ] ; then
+    . $SCRIPT_BEFORE_DEP_COMPILATION_VERSIONED
+  fi
+  echo ::endgroup::
+fi
 
 if [ -f "$SOURCE_DEPENDENCIES" ] || [ -f "$SOURCE_DEPENDENCIES_VERSIONED" ] ; then
   echo ::group::Compile dependencies from source
