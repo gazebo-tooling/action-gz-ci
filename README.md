@@ -69,12 +69,8 @@ repositories:
     version: branch_name
 ```
 
-When we install a dependency from binaries, it brings all its own
-dependencies along with it. But when we build it from source, we need to
-manually install these indirect dependencies through `packages.apt`. In
-the example above, this means appending `ign-rendering`'s dependencies like
-`libogre-2.1-dev` to the other dependencies already in `ign-gui`'s
-`packages.apt`.
+In this example, `gz-rendering`'s dependencies will be installed from its own
+`packages.apt` files.
 
 ### Codecov
 
@@ -95,6 +91,7 @@ token and add it through the `codecov-token-private-repos` input. For example:
 You can add optional scripts to be run at specific times of the build. They can
 be either in `.github/ci` or `/github/ci-<system version>` as needed.
 
+* `before_dep_compilation.sh`: Runs before dependencies are compiled from source
 * `before_cmake.sh`: Runs before the `cmake` call
 * `between_cmake_make.sh`: Runs after the `cmake` and before `make`
 * `after_make.sh`: Runs after `make` and before `make test`
