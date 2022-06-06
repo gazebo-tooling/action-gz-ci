@@ -33,6 +33,11 @@ apt -y install \
   python3-pip \
   wget
 
+# Add the workspace as a safe directory in the global git config. This ensures that any 
+# even if the workspace is owned by another user, git commands still work.
+# See https://github.com/actions/checkout/issues/760
+git config --global --add safe.directory $GITHUB_WORKSPACE
+
 SYSTEM_VERSION=`lsb_release -cs`
 
 SOURCE_DEPENDENCIES="`pwd`/.github/ci/dependencies.yaml"
