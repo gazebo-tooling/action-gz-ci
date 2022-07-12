@@ -1,10 +1,10 @@
 # Ubuntu CI action
 
-Compile and run tests for Ignition libraries.
+Compile and run tests for Gazebo libraries.
 
 ## Usage
 
-Add the following file to an Ignition repository:
+Add the following file to a Gazebo repository:
 `.github/workflows/ci.yml`
 
 ```
@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Compile and test
         id: ci
-        uses: ignition-tooling/ubuntu-ci-action@master
+        uses: gazebo-tooling/ubuntu-ci-action@master
         with:
           codecov-enabled: true
           doxygen-enabled: true
@@ -41,7 +41,7 @@ package per line.
   according to the distribution.
 
 See some examples
-[here](https://github.com/ignitionrobotics/ign-gazebo/tree/ign-gazebo5/.github/ci).
+[here](https://github.com/gazebosim/gz-sim/tree/main/.github/ci).
 
 > The `apt-dependencies` input is deprecated. Use the `.apt` files instead.
 
@@ -57,23 +57,23 @@ If you need to install dependencies from source, add a
 
 Dependencies are built using `colcon`.
 
-For example, to build a custom `ign-rendering` branch on `ign-gui`, add
+For example, to build a custom `gz-rendering` branch on `gz-gui`, add
 `.github/ci/dependencies.yaml` (replacing `branch_name` with the
-`ign-rendering` branch you want to use):
+`gz-rendering` branch you want to use):
 
 ```.yaml
 repositories:
-  ign-rendering:
+  gz-rendering:
     type: git
-    url: https://github.com/ignitionrobotics/ign-rendering
+    url: https://github.com/gazebosim/gz-rendering
     version: branch_name
 ```
 
 When we install a dependency from binaries, it brings all its own
 dependencies along with it. But when we build it from source, we need to
 manually install these indirect dependencies through `packages.apt`. In
-the example above, this means appending `ign-rendering`'s dependencies like
-`libogre-2.1-dev` to the other dependencies already in `ign-gui`'s
+the example above, this means appending `gz-rendering`'s dependencies like
+`libogre-2.1-dev` to the other dependencies already in `gz-gui`'s
 `packages.apt`.
 
 ### Codecov
