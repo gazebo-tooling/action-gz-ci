@@ -38,10 +38,17 @@ if [ -n "$DOXYGEN_ENABLED" ] && ${DOXYGEN_ENABLED} ; then
   apt -y install doxygen
 fi
 
+# Add the workspace as a safe directory in the global git config. This ensures that any
+# even if the workspace is owned by another user, git commands still work.
+# See https://github.com/actions/checkout/issues/760
+git config --global --add safe.directory $GITHUB_WORKSPACE
+
 SYSTEM_VERSION=`lsb_release -cs`
 
 SOURCE_DEPENDENCIES="`pwd`/.github/ci/dependencies.yaml"
 SOURCE_DEPENDENCIES_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/dependencies.yaml"
+SCRIPT_BEFORE_DEP_COMPILATION="`pwd`/.github/ci/before_dep_compilation.sh"
+SCRIPT_BEFORE_DEP_COMPILATION_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/before_dep_compilation.sh"
 SCRIPT_BEFORE_CMAKE="`pwd`/.github/ci/before_cmake.sh"
 SCRIPT_BEFORE_CMAKE_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/before_cmake.sh"
 SCRIPT_BETWEEN_CMAKE_MAKE="`pwd`/.github/ci/between_cmake_make.sh"
@@ -52,12 +59,12 @@ SCRIPT_AFTER_MAKE_TEST="`pwd`/.github/ci/after_make_test.sh"
 SCRIPT_AFTER_MAKE_TEST_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/after_make_test.sh"
 
 # Infer package name from GITHUB_REPOSITORY
-PACKAGE=$(echo "$GITHUB_REPOSITORY" | sed 's:.*/::' | sed 's:ign-:ignition-:')
-wget https://raw.githubusercontent.com/ignition-tooling/release-tools/master/jenkins-scripts/tools/detect_cmake_major_version.py
+PACKAGE=$(echo "$GITHUB_REPOSITORY" | sed 's:.*/::')
+wget https://raw.githubusercontent.com/gazebo-tooling/release-tools/master/jenkins-scripts/tools/detect_cmake_major_version.py
 PACKAGE_MAJOR_VERSION=$(python3 detect_cmake_major_version.py "$GITHUB_WORKSPACE"/CMakeLists.txt)
 
 # Check for ci_matching_branch in gzdev
-wget https://raw.githubusercontent.com/ignition-tooling/release-tools/master/jenkins-scripts/tools/detect_ci_matching_branch.py
+wget https://raw.githubusercontent.com/gazebo-tooling/release-tools/master/jenkins-scripts/tools/detect_ci_matching_branch.py
 if python3 detect_ci_matching_branch.py "${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"; then
   GZDEV_TRY_BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
 fi
@@ -94,6 +101,17 @@ apt -y install \
   $OLD_APT_DEPENDENCIES \
   $(sort -u $(find . -iname 'packages-'$SYSTEM_VERSION'.apt' -o -iname 'packages.apt') | tr '\n' ' ')
 echo ::endgroup::
+
+if [ -f "$SCRIPT_BEFORE_DEP_COMPILATION" ] || [ -f "$SCRIPT_BEFORE_DEP_COMPILATION_VERSIONED" ] ; then
+  echo ::group::Script before dependencies compilation from source
+  if [ -f "$SCRIPT_BEFORE_DEP_COMPILATION" ] ; then
+    . $SCRIPT_BEFORE_DEP_COMPILATION
+  fi
+  if [ -f "$SCRIPT_BEFORE_DEP_COMPILATION_VERSIONED" ] ; then
+    . $SCRIPT_BEFORE_DEP_COMPILATION_VERSIONED
+  fi
+  echo ::endgroup::
+fi
 
 if [ -f "$SOURCE_DEPENDENCIES" ] || [ -f "$SOURCE_DEPENDENCIES_VERSIONED" ] ; then
   echo ::group::Compile dependencies from source
@@ -147,7 +165,7 @@ echo ::endgroup
 if [ -n "$DOXYGEN_ENABLED" ] && ${DOXYGEN_ENABLED} ; then
   echo ::group::Documentation check
   make doc 2>&1
-  bash <(curl -s https://raw.githubusercontent.com/ignitionrobotics/ign-cmake/ign-cmake2/tools/doc_check.sh)
+  bash <(curl -s https://raw.githubusercontent.com/gazebosim/gz-cmake/main/tools/doc_check.sh)
   echo ::endgroup::
 fi
 
