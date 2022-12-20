@@ -45,23 +45,28 @@ git config --global --add safe.directory $GITHUB_WORKSPACE
 
 SYSTEM_VERSION=`lsb_release -cs`
 
-SOURCE_DEPENDENCIES="`pwd`/.github/ci/dependencies.yaml"
-SOURCE_DEPENDENCIES_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/dependencies.yaml"
-SCRIPT_BEFORE_DEP_COMPILATION="`pwd`/.github/ci/before_dep_compilation.sh"
-SCRIPT_BEFORE_DEP_COMPILATION_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/before_dep_compilation.sh"
-SCRIPT_BEFORE_CMAKE="`pwd`/.github/ci/before_cmake.sh"
-SCRIPT_BEFORE_CMAKE_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/before_cmake.sh"
-SCRIPT_BETWEEN_CMAKE_MAKE="`pwd`/.github/ci/between_cmake_make.sh"
-SCRIPT_BETWEEN_CMAKE_MAKE_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/between_cmake_make.sh"
-SCRIPT_AFTER_MAKE="`pwd`/.github/ci/after_make.sh"
-SCRIPT_AFTER_MAKE_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/after_make.sh"
-SCRIPT_AFTER_MAKE_TEST="`pwd`/.github/ci/after_make_test.sh"
-SCRIPT_AFTER_MAKE_TEST_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/after_make_test.sh"
+PWD_GITHUB_CI="`pwd`/.github/ci"
+SOURCE_DEPENDENCIES="${PWD_GITHUB_CI}/dependencies.yaml"
+SOURCE_DEPENDENCIES_VERSIONED="${PWD_GITHUB_CI}-$SYSTEM_VERSION/dependencies.yaml"
+SCRIPT_BEFORE_DEP_COMPILATION="${PWD_GITHUB_CI}/before_dep_compilation.sh"
+SCRIPT_BEFORE_DEP_COMPILATION_VERSIONED="${PWD_GITHUB_CI}-$SYSTEM_VERSION/before_dep_compilation.sh"
+SCRIPT_BEFORE_CMAKE="${PWD_GITHUB_CI}/before_cmake.sh"
+SCRIPT_BEFORE_CMAKE_VERSIONED="${PWD_GITHUB_CI}-$SYSTEM_VERSION/before_cmake.sh"
+SCRIPT_BETWEEN_CMAKE_MAKE="${PWD_GITHUB_CI}/between_cmake_make.sh"
+SCRIPT_BETWEEN_CMAKE_MAKE_VERSIONED="${PWD_GITHUB_CI}-$SYSTEM_VERSION/between_cmake_make.sh"
+SCRIPT_AFTER_MAKE="${PWD_GITHUB_CI}/after_make.sh"
+SCRIPT_AFTER_MAKE_VERSIONED="${PWD_GITHUB_CI}-$SYSTEM_VERSION/after_make.sh"
+SCRIPT_AFTER_MAKE_TEST="${PWD_GITHUB_CI}/after_make_test.sh"
+SCRIPT_AFTER_MAKE_TEST_VERSIONED="${PWD_GITHUB_CI}-$SYSTEM_VERSION/after_make_test.sh"
 
 # Infer package name from GITHUB_REPOSITORY
 PACKAGE=$(echo "$GITHUB_REPOSITORY" | sed 's:.*/::')
 wget https://raw.githubusercontent.com/gazebo-tooling/release-tools/master/jenkins-scripts/tools/detect_cmake_major_version.py
 PACKAGE_MAJOR_VERSION=$(python3 detect_cmake_major_version.py "$GITHUB_WORKSPACE"/CMakeLists.txt)
+
+# Check for GZDEV_USE_* files
+GZDEV_USE_NIGHTLY="${PWD_GITHUB_CI}/GZ_DEV_USE_NIGHTLY"
+GZDEV_USE_PRERELEASE="${PWD_GITHUB_CI}/GZ_DEV_USE_PRERELEASE"
 
 # Check for ci_matching_branch in gzdev
 wget https://raw.githubusercontent.com/gazebo-tooling/release-tools/master/jenkins-scripts/tools/detect_ci_matching_branch.py
@@ -69,13 +74,20 @@ if python3 detect_ci_matching_branch.py "${GITHUB_HEAD_REF:-${GITHUB_REF#refs/he
   GZDEV_TRY_BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
 fi
 
-git clone https://github.com/osrf/gzdev /tmp/gzdev
+git clone https://github.com/gazebo-tooling/gzdev /tmp/gzdev
 if [ -n "${GZDEV_TRY_BRANCH}" ]; then
   git -C /tmp/gzdev checkout ${GZDEV_TRY_BRANCH} || true
 fi
 pip3 install -r /tmp/gzdev/requirements.txt
 /tmp/gzdev/gzdev.py \
   repository enable --project="${PACKAGE}${PACKAGE_MAJOR_VERSION}"
+
+if [ -f "$GZDEV_USE_NIGHTLY" ] ; then
+  /tmp/gzdev/gzdev.py repository enable osrf nightly
+fi
+if [ -f "$GZDEV_USE_PRERELEASE" ] ; then
+  /tmp/gzdev/gzdev.py repository enable osrf prerelease
+fi
 
 apt-get update 2>&1
 echo ::endgroup::
