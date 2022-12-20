@@ -45,18 +45,19 @@ git config --global --add safe.directory $GITHUB_WORKSPACE
 
 SYSTEM_VERSION=`lsb_release -cs`
 
-SOURCE_DEPENDENCIES="`pwd`/.github/ci/dependencies.yaml"
-SOURCE_DEPENDENCIES_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/dependencies.yaml"
-SCRIPT_BEFORE_DEP_COMPILATION="`pwd`/.github/ci/before_dep_compilation.sh"
-SCRIPT_BEFORE_DEP_COMPILATION_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/before_dep_compilation.sh"
-SCRIPT_BEFORE_CMAKE="`pwd`/.github/ci/before_cmake.sh"
-SCRIPT_BEFORE_CMAKE_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/before_cmake.sh"
-SCRIPT_BETWEEN_CMAKE_MAKE="`pwd`/.github/ci/between_cmake_make.sh"
-SCRIPT_BETWEEN_CMAKE_MAKE_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/between_cmake_make.sh"
-SCRIPT_AFTER_MAKE="`pwd`/.github/ci/after_make.sh"
-SCRIPT_AFTER_MAKE_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/after_make.sh"
-SCRIPT_AFTER_MAKE_TEST="`pwd`/.github/ci/after_make_test.sh"
-SCRIPT_AFTER_MAKE_TEST_VERSIONED="`pwd`/.github/ci-$SYSTEM_VERSION/after_make_test.sh"
+PWD_GITHUB_CI="`pwd`/.github/ci"
+SOURCE_DEPENDENCIES="${PWD_GITHUB_CI}/dependencies.yaml"
+SOURCE_DEPENDENCIES_VERSIONED="${PWD_GITHUB_CI}-$SYSTEM_VERSION/dependencies.yaml"
+SCRIPT_BEFORE_DEP_COMPILATION="${PWD_GITHUB_CI}/before_dep_compilation.sh"
+SCRIPT_BEFORE_DEP_COMPILATION_VERSIONED="${PWD_GITHUB_CI}-$SYSTEM_VERSION/before_dep_compilation.sh"
+SCRIPT_BEFORE_CMAKE="${PWD_GITHUB_CI}/before_cmake.sh"
+SCRIPT_BEFORE_CMAKE_VERSIONED="${PWD_GITHUB_CI}-$SYSTEM_VERSION/before_cmake.sh"
+SCRIPT_BETWEEN_CMAKE_MAKE="${PWD_GITHUB_CI}/between_cmake_make.sh"
+SCRIPT_BETWEEN_CMAKE_MAKE_VERSIONED="${PWD_GITHUB_CI}-$SYSTEM_VERSION/between_cmake_make.sh"
+SCRIPT_AFTER_MAKE="${PWD_GITHUB_CI}/after_make.sh"
+SCRIPT_AFTER_MAKE_VERSIONED="${PWD_GITHUB_CI}-$SYSTEM_VERSION/after_make.sh"
+SCRIPT_AFTER_MAKE_TEST="${PWD_GITHUB_CI}/after_make_test.sh"
+SCRIPT_AFTER_MAKE_TEST_VERSIONED="${PWD_GITHUB_CI}-$SYSTEM_VERSION/after_make_test.sh"
 
 # Infer package name from GITHUB_REPOSITORY
 PACKAGE=$(echo "$GITHUB_REPOSITORY" | sed 's:.*/::')
