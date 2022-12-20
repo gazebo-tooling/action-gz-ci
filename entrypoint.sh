@@ -64,6 +64,10 @@ PACKAGE=$(echo "$GITHUB_REPOSITORY" | sed 's:.*/::')
 wget https://raw.githubusercontent.com/gazebo-tooling/release-tools/master/jenkins-scripts/tools/detect_cmake_major_version.py
 PACKAGE_MAJOR_VERSION=$(python3 detect_cmake_major_version.py "$GITHUB_WORKSPACE"/CMakeLists.txt)
 
+# Check for GZDEV_USE_* files
+GZDEV_USE_NIGHTLY="${PWD_GITHUB_CI}/GZ_DEV_USE_NIGHTLY"
+GZDEV_USE_PRERELEASE="${PWD_GITHUB_CI}/GZ_DEV_USE_PRERELEASE"
+
 # Check for ci_matching_branch in gzdev
 wget https://raw.githubusercontent.com/gazebo-tooling/release-tools/master/jenkins-scripts/tools/detect_ci_matching_branch.py
 if python3 detect_ci_matching_branch.py "${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}"; then
@@ -77,6 +81,13 @@ fi
 pip3 install -r /tmp/gzdev/requirements.txt
 /tmp/gzdev/gzdev.py \
   repository enable --project="${PACKAGE}${PACKAGE_MAJOR_VERSION}"
+
+if [ -f "$GZDEV_USE_NIGHTLY" ] ; then
+  /tmp/gzdev/gzdev.py repository enable osrf nightly
+fi
+if [ -f "$GZDEV_USE_PRERELEASE" ] ; then
+  /tmp/gzdev/gzdev.py repository enable osrf prerelease
+fi
 
 apt-get update 2>&1
 echo ::endgroup::
