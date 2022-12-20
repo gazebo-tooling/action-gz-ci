@@ -70,7 +70,7 @@ if python3 detect_ci_matching_branch.py "${GITHUB_HEAD_REF:-${GITHUB_REF#refs/he
   GZDEV_TRY_BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
 fi
 
-git clone https://github.com/osrf/gzdev /tmp/gzdev
+git clone https://github.com/gazebo-tooling/gzdev /tmp/gzdev
 if [ -n "${GZDEV_TRY_BRANCH}" ]; then
   git -C /tmp/gzdev checkout ${GZDEV_TRY_BRANCH} || true
 fi
