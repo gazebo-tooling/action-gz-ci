@@ -1,5 +1,8 @@
 #!/bin/bash -l
 
+# this Ubuntu distribution has reached end-of-life, make this a no-op
+exit 0
+
 set -x
 set -e
 
