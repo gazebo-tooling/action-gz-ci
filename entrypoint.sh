@@ -34,6 +34,10 @@ apt -y install \
   python3-pip \
   wget
 
+# Allowing pip to install packages in the system
+mkdir -p "${HOME}/.config/pip"
+echo -e '[global]\nbreak-system-packages = true' > "${HOME}/.config/pip/pip.conf"
+
 if [ -n "$DOXYGEN_ENABLED" ] && ${DOXYGEN_ENABLED} ; then
   apt -y install doxygen
 fi
