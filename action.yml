@@ -1,4 +1,4 @@
-name: 'Ignition install'
+name: 'Gazebo install'
 description: ''
 author: "Louise Poubel"
 inputs:

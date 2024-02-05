@@ -13,15 +13,15 @@ name: Ubuntu CI
 on: [push, pull_request]
 
 jobs:
-  focal-ci:
+  noble-ci:
     runs-on: ubuntu-latest
-    name: Ubuntu Focal CI
+    name: Ubuntu Noble CI
     steps:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Compile and test
         id: ci
-        uses: gazebo-tooling/ubuntu-ci-action@focal
+        uses: gazebo-tooling/ubuntu-ci-action@noble
         with:
           codecov-enabled: true
           doxygen-enabled: true
@@ -37,7 +37,7 @@ package per line.
 
 * `.github/ci/packages.apt` : Installed for all versions.
 * `.github/ci/packages-<system version>.apt` : where `<system version>` can be
-  bionic, focal, etc. Use these if you need to install different dependencies
+  focal, noble, etc. Use these if you need to install different dependencies
   according to the distribution.
 
 See some examples
@@ -52,7 +52,7 @@ If you need to install dependencies from source, add a
 
 * `.github/ci/dependencies.yaml` : Installed for all versions
 * `.github/ci-<system version>/dependencies.yaml` : where `<system version>`
-  can be bionic, focal, etc. Use these if you need to install different
+  can be focal, noble, etc. Use these if you need to install different
   dependencies according to the distribution.
 
 Dependencies are built using `colcon`.
