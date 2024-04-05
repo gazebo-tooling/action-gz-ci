@@ -1,0 +1,17 @@
+name: 'Validate package.xml'
+description: 'Validate package.xml file'
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: package.xml and CMake versions match
+      shell: bash
+      run: |
+        echo "Extract version numbers and compare"
+        package_xml_version=$(sed -nE 's/\s*<version>([0-9.]*)<\/version>\s*/\1/p' package.xml)
+        echo "Version in package.xml: ${package_xml_version}"
+        cmake_version=$(sed -nE 's/^project.*VERSION\s*([0-9.]*).*/\1/p' CMakeLists.txt)
+        echo "Version in CMake: ${cmake_version}"
+        [ $package_xml_version = $cmake_version ]
