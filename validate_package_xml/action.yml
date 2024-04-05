@@ -10,8 +10,9 @@ runs:
       shell: bash
       run: |
         echo "Extract version numbers and compare"
+        echo '## CMake and Package.xml Versions' >> $GITHUB_STEP_SUMMARY
         package_xml_version=$(sed -nE 's/\s*<version>([0-9.]*)<\/version>\s*/\1/p' package.xml)
-        echo "Version in package.xml: ${package_xml_version}"
+        echo "Version in package.xml: ${package_xml_version}" | tee -a $GITHUB_STEP_SUMMARY
         cmake_version=$(sed -nE 's/^project.*VERSION\s*([0-9.]*).*/\1/p' CMakeLists.txt)
-        echo "Version in CMake: ${cmake_version}"
+        echo "Version in CMake: ${cmake_version}" | tee -a $GITHUB_STEP_SUMMARY
         [ $package_xml_version = $cmake_version ]
