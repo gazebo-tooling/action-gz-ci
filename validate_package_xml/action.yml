@@ -10,7 +10,7 @@ runs:
       shell: bash
       run: |
         echo "Install ament-xmllint"
-        apt install python3-ament-xmllint
+        sudo apt-get install -y python3-ament-xmllint
         ament_xmllint package.xml | tee $GITHUB_STEP_SUMMARY
 
     - name: package.xml and CMake versions match
