@@ -11,7 +11,10 @@ runs:
       run: |
         echo "Install ament-xmllint"
         sudo apt-get update
-        sudo apt-get install -y python3-ament-xmllint
+        sudo apt-get install -y python3-venv
+        python3 -m venv .venv
+        source .venv/bin/activate
+        pip install ament-xmllint
         ament_xmllint package.xml 2>&1 | tee $GITHUB_STEP_SUMMARY
 
     - name: package.xml and CMake versions match
