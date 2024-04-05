@@ -6,6 +6,13 @@ runs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: package.xml syntax validation
+      shell: bash
+      run: |
+        echo "Install ament-xmllint"
+        apt install python3-ament-xmllint
+        ament_xmllint package.xml | tee $GITHUB_STEP_SUMMARY
+
     - name: package.xml and CMake versions match
       shell: bash
       run: |
