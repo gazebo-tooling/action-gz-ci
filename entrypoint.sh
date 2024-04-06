@@ -200,6 +200,7 @@ if [ -n "$TESTS_ENABLED" ] && ${TESTS_ENABLED} ; then
   export CTEST_OUTPUT_ON_FAILURE=1
   cd "$GITHUB_WORKSPACE"/build
   make test
+  python3 /junit_to_md.py test_results/*.xml >> $GITHUB_STEP_SUMMARY
   echo ::endgroup::
 fi
 
