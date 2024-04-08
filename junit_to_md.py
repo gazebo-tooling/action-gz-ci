@@ -20,7 +20,7 @@ print()
 
 for doc in docs:
     for testsuite in doc.findall('testsuite'):
-        print(f'<details><summary><h4>{testsuite.attrib["name"]}</h4></summary>\n')
+        print(f'<details><summary>\n\n#### {testsuite.attrib["name"]}\n</summary>\n')
         print('| Status | Name | Time |')
         print('| ------ | ---- | ---- |')
         for testcase in doc.findall('testsuite/testcase'):
