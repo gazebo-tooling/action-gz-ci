@@ -12,15 +12,14 @@ for file in sys.argv[1:]:
             status = "Failed ❌"
         else:
             status = "Passed ✅"
-        slug = testsuite.attrib['name'].lower()
-        print('| {status} | [{name}](#{slug}) | {tests} | {failures} | {disabled} | {skipped} | {errors} | {time} |'.format(status=status, **testsuite.attrib, slug=slug))
+        print('| {status} | {name} | {tests} | {failures} | {disabled} | {skipped} | {errors} | {time} |'.format(status=status, **testsuite.attrib))
 
 
 print()
 
 for doc in docs:
     for testsuite in doc.findall('testsuite'):
-        print(f'<details><summary>\n\n#### {testsuite.attrib["name"]}\n</summary>\n')
+        print(f'<details><summary>{testsuite.attrib["name"]}</summary>\n')
         print('| Status | Name | Time |')
         print('| ------ | ---- | ---- |')
         for testcase in doc.findall('testsuite/testcase'):
