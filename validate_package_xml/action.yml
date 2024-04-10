@@ -1,0 +1,30 @@
+name: 'Validate package.xml'
+description: 'Validate package.xml file'
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    # TODO(azeey) Uncomment once https://github.com/ros-infrastructure/rep/pull/400
+    # is merged and the .xsd changes have propagated to ament_xmllint.
+    # - name: package.xml syntax validation
+    #   shell: bash
+    #   run: |
+    #     echo "Install ament-xmllint"
+    #     sudo apt-get install -y python3-venv libxml2-utils
+    #     python3 -m venv .venv
+    #     source .venv/bin/activate
+    #     pip install ament-xmllint
+    #     ament_xmllint package.xml 2>&1 | tee $GITHUB_STEP_SUMMARY
+
+    - name: package.xml and CMake versions match
+      shell: bash
+      run: |
+        echo "Extract version numbers and compare"
+        echo '## CMake and Package.xml Versions' >> $GITHUB_STEP_SUMMARY
+        package_xml_version=$(sed -nE 's/\s*<version>([0-9.]*)<\/version>\s*/\1/p' package.xml)
+        echo "Version in package.xml: ${package_xml_version}" | tee -a $GITHUB_STEP_SUMMARY
+        cmake_version=$(sed -nE 's/^project.*VERSION\s*([0-9.]*).*/\1/p' CMakeLists.txt)
+        echo "Version in CMake: ${cmake_version}" | tee -a $GITHUB_STEP_SUMMARY
+        [ $package_xml_version = $cmake_version ]
