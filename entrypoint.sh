@@ -73,7 +73,7 @@ git clone https://github.com/osrf/gzdev /tmp/gzdev
 if [ -n "${GZDEV_TRY_BRANCH}" ]; then
   git -C /tmp/gzdev checkout ${GZDEV_TRY_BRANCH} || true
 fi
-pip3 install -r /tmp/gzdev/requirements.txt
+pip3 install -r /tmp/gzdev/requirements.txt --break-system-packages
 /tmp/gzdev/gzdev.py \
   repository enable --project="${PACKAGE}${PACKAGE_MAJOR_VERSION}"
 
@@ -81,7 +81,7 @@ apt-get update 2>&1
 echo ::endgroup::
 
 echo ::group::Install tools: pip
-pip3 install -U pip vcstool colcon-common-extensions
+pip3 install -U pip vcstool colcon-common-extensions --break-system-packages
 echo ::endgroup::
 
 if [ -f "$SOURCE_DEPENDENCIES" ] || [ -f "$SOURCE_DEPENDENCIES_VERSIONED" ] ; then
