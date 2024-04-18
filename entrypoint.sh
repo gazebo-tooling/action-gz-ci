@@ -199,7 +199,13 @@ if [ -n "$TESTS_ENABLED" ] && ${TESTS_ENABLED} ; then
   echo ::group::make test
   export CTEST_OUTPUT_ON_FAILURE=1
   cd "$GITHUB_WORKSPACE"/build
-  make test
+  # Capture exit code to avoid exiting early
+  make test || test_exit_code=$?
+  echo "Summarize test results"
+  python3 /junit_to_md.py test_results/*.xml >> $GITHUB_STEP_SUMMARY || true
+  if [ $test_exit_code -ne 0 ]; then
+    exit $test_exit_code ;
+  fi
   echo ::endgroup::
 fi
 
