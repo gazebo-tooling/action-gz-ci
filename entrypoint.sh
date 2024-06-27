@@ -81,7 +81,7 @@ apt-get update 2>&1
 echo ::endgroup::
 
 echo ::group::Install tools: pip
-pip3 install -U pip vcstool colcon-common-extensions --break-system-packages
+pip3 install -U vcstool colcon-common-extensions --break-system-packages
 echo ::endgroup::
 
 if [ -f "$SOURCE_DEPENDENCIES" ] || [ -f "$SOURCE_DEPENDENCIES_VERSIONED" ] ; then
