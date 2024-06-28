@@ -23,6 +23,7 @@ apt -y install \
   gnupg \
   lsb-release \
   python3-pip \
+  python3-venv \
   wget
 
 SYSTEM_VERSION=`lsb_release -cs`
@@ -43,15 +44,20 @@ PACKAGE=$(echo "$GITHUB_REPOSITORY" | sed 's:.*/::' | sed 's:ign-:ignition-:')
 wget https://raw.githubusercontent.com/ignition-tooling/release-tools/master/jenkins-scripts/tools/detect_cmake_major_version.py
 PACKAGE_MAJOR_VERSION=$(python3 detect_cmake_major_version.py "$GITHUB_WORKSPACE"/CMakeLists.txt)
 
+python3 -m venv "$HOME/venv_gzdev"
+. "$HOME/venv_gzdev/bin/activate"
 git clone --depth 1 https://github.com/osrf/gzdev /tmp/gzdev
 pip3 install -r /tmp/gzdev/requirements.txt
 /tmp/gzdev/gzdev.py \
   repository enable --project="${PACKAGE}${PACKAGE_MAJOR_VERSION}"
+. "$HOME/venv_gzdev/bin/deactivate"
 
 apt-get update 2>&1
 echo ::endgroup::
 
 echo ::group::Install tools: pip
+python3 -m venv "$HOME/venv_buildtools"
+. "$HOME/venv_buildtools/bin/activate"
 pip3 install -U pip vcstool colcon-common-extensions
 echo ::endgroup::
 
