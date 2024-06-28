@@ -31,12 +31,8 @@ apt -y install \
   gnupg \
   lcov \
   lsb-release \
-  python3-pip \
+  python3-venv \
   wget
-
-# Allowing pip to install packages in the system
-mkdir -p "${HOME}/.config/pip"
-echo -e '[global]\nbreak-system-packages = true' > "${HOME}/.config/pip/pip.conf"
 
 if [ -n "$DOXYGEN_ENABLED" ] && ${DOXYGEN_ENABLED} ; then
   apt -y install doxygen
@@ -73,19 +69,25 @@ if python3 detect_ci_matching_branch.py "${GITHUB_HEAD_REF:-${GITHUB_REF#refs/he
   GZDEV_TRY_BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
 fi
 
+
+python3 -m venv "$HOME/venv_gzdev"
+. "$HOME/venv_gzdev/bin/activate"
 git clone https://github.com/osrf/gzdev /tmp/gzdev
 if [ -n "${GZDEV_TRY_BRANCH}" ]; then
   git -C /tmp/gzdev checkout ${GZDEV_TRY_BRANCH} || true
 fi
-pip3 install -r /tmp/gzdev/requirements.txt --break-system-packages
+pip3 install -r /tmp/gzdev/requirements.txt
 /tmp/gzdev/gzdev.py \
   repository enable --project="${PACKAGE}${PACKAGE_MAJOR_VERSION}"
+. "$HOME/venv_gzdev/bin/deactivate"
 
 apt-get update 2>&1
 echo ::endgroup::
 
-echo ::group::Install tools: pip
-pip3 install -U pip vcstool colcon-common-extensions --break-system-packages
+echo ::group::Install build tools in venv
+python3 -m venv "$HOME/venv_buildtools"
+. "$HOME/venv_buildtools/bin/activate"
+pip3 install -U pip vcstool colcon-common-extensions
 echo ::endgroup::
 
 if [ -f "$SOURCE_DEPENDENCIES" ] || [ -f "$SOURCE_DEPENDENCIES_VERSIONED" ] ; then
