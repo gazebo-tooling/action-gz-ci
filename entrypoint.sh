@@ -87,7 +87,7 @@ apt-get update 2>&1
 echo ::endgroup::
 
 echo ::group::Install build tools in venv
-python3 -m venv "$VENV_ROOT/venv_buildtools"
+python3 -m venv --system-site-packages gz "$VENV_ROOT/venv_buildtools"
 . "$VENV_ROOT/venv_buildtools/bin/activate"
 pip3 install -U pip vcstool colcon-common-extensions
 echo ::endgroup::
