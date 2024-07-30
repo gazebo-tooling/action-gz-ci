@@ -32,7 +32,6 @@ apt -y install \
   lcov \
   lsb-release \
   python3-pip \
-  python3-vcstool \
   wget
 
 if [ -n "$DOXYGEN_ENABLED" ] && ${DOXYGEN_ENABLED} ; then
