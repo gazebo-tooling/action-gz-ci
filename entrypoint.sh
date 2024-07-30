@@ -32,11 +32,13 @@ apt -y install \
   lcov \
   lsb-release \
   python3-pip \
+  python3-vcstool \
   wget
 
-# Allowing pip to install packages in the system
-mkdir -p "${HOME}/.config/pip"
-echo -e '[global]\nbreak-system-packages = true' > "${HOME}/.config/pip/pip.conf"
+# Add colcon repository
+mkdir -p /etc/apt/keyrings/
+curl -fsSL https://packagecloud.io/dirk-thomas/colcon/gpgkey | gpg --dearmor > /etc/apt/keyrings/colcon-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=signed-by=/etc/apt/keyrings/colcon-archive-keyring.gpg https://packagecloud.io/dirk-thomas/colcon/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/colcon.list > /dev/null
 
 if [ -n "$DOXYGEN_ENABLED" ] && ${DOXYGEN_ENABLED} ; then
   apt -y install doxygen
@@ -84,8 +86,11 @@ pip3 install -r /tmp/gzdev/requirements.txt --break-system-packages
 apt-get update 2>&1
 echo ::endgroup::
 
-echo ::group::Install tools: pip
-pip3 install -U pip vcstool colcon-common-extensions --break-system-packages
+echo ::group::Install tools: source
+git clone https://github.com/linux-test-project/lcov.git -b v1.14 2>&1
+cd lcov
+make install
+cd ..
 echo ::endgroup::
 
 if [ -f "$SOURCE_DEPENDENCIES" ] || [ -f "$SOURCE_DEPENDENCIES_VERSIONED" ] ; then
@@ -102,6 +107,7 @@ fi
 
 echo ::group::Install dependencies from binaries
 apt -y install \
+  python3-colcon-common-extensions
   $OLD_APT_DEPENDENCIES \
   $(sort -u $(find . -iname 'packages-'$SYSTEM_VERSION'.apt' -o -iname 'packages.apt') | tr '\n' ' ')
 echo ::endgroup::
