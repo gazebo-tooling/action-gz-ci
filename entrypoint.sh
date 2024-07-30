@@ -86,13 +86,6 @@ pip3 install -r /tmp/gzdev/requirements.txt --break-system-packages
 apt-get update 2>&1
 echo ::endgroup::
 
-echo ::group::Install tools: source
-git clone https://github.com/linux-test-project/lcov.git -b v1.14 2>&1
-cd lcov
-make install
-cd ..
-echo ::endgroup::
-
 if [ -f "$SOURCE_DEPENDENCIES" ] || [ -f "$SOURCE_DEPENDENCIES_VERSIONED" ] ; then
   echo ::group::Fetch source dependencies
   mkdir -p deps/src
