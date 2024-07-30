@@ -71,7 +71,6 @@ if python3 detect_ci_matching_branch.py "${GITHUB_HEAD_REF:-${GITHUB_REF#refs/he
   GZDEV_TRY_BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
 fi
 
-
 python3 -m venv "$VENV_ROOT/venv_gzdev"
 . "$VENV_ROOT/venv_gzdev/bin/activate"
 git clone https://github.com/osrf/gzdev /tmp/gzdev
@@ -84,12 +83,6 @@ pip3 install -r /tmp/gzdev/requirements.txt
 deactivate
 
 apt-get update 2>&1
-echo ::endgroup::
-
-echo ::group::Install build tools in venv
-python3 -m venv --system-site-packages gz "$VENV_ROOT/venv_buildtools"
-. "$VENV_ROOT/venv_buildtools/bin/activate"
-pip3 install -U pip vcstool colcon-common-extensions
 echo ::endgroup::
 
 if [ -f "$SOURCE_DEPENDENCIES" ] || [ -f "$SOURCE_DEPENDENCIES_VERSIONED" ] ; then
