@@ -84,8 +84,10 @@ if [ -f "$SOURCE_DEPENDENCIES" ] || [ -f "$SOURCE_DEPENDENCIES_VERSIONED" ] ; th
   echo ::group::Prepare colcon and vcs for source dependencies
   # Add colcon repository
   mkdir -p /etc/apt/keyrings/
-  curl -fsSL https://packagecloud.io/dirk-thomas/colcon/gpgkey | gpg --dearmor > /etc/apt/keyrings/colcon-archive-keyring.gpg
-  echo "deb [arch=$(dpkg --print-architecture) signed-by=signed-by=/etc/apt/keyrings/colcon-archive-keyring.gpg https://packagecloud.io/dirk-thomas/colcon/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/colcon.list > /dev/null
+  for tool in colcon vcstool; do
+    curl -fsSL "https://packagecloud.io/dirk-thomas/${tool}/gpgkey" | gpg --dearmor > "/etc/apt/keyrings/${tool}-archive-keyring.gpg"
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/${tool}-archive-keyring.gpg] https://packagecloud.io/dirk-thomas/${tool}/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/${tool}.list > /dev/null
+  done
   apt update 2>&1
   apt -y install python3-vcstool \
                  python3-colcon-common-extensions
