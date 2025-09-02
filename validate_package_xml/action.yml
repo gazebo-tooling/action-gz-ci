@@ -6,13 +6,16 @@ runs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: package.xml syntax validation
+      shell: bash
+      run: |
+        echo "Install xmllint"
+        sudo apt-get install -y libxml2-utils
+        xmllint --noout package.xml
     # TODO(azeey) Uncomment once https://github.com/ros-infrastructure/rep/pull/400
     # is merged and the .xsd changes have propagated to ament_xmllint.
-    # - name: package.xml syntax validation
-    #   shell: bash
-    #   run: |
     #     echo "Install ament-xmllint"
-    #     sudo apt-get install -y python3-venv libxml2-utils
+    #     sudo apt-get install -y python3-venv
     #     python3 -m venv .venv
     #     source .venv/bin/activate
     #     pip install ament-xmllint
