@@ -13,6 +13,8 @@ TESTS_ENABLED=$7
 CPPLINT_ENABLED=$8
 CPPCHECK_ENABLED=$9
 
+VENV_ROOT=/tmp/
+
 # keep the previous behaviour of running codecov if old token is set
 [ -n "${DEPRECATED_CODECOV_TOKEN}" ] && CODECOV_ENABLED=1
 
@@ -31,7 +33,7 @@ apt -y install \
   gnupg \
   lcov \
   lsb-release \
-  python3-pip \
+  python3-venv \
   wget
 
 if [ -n "$DOXYGEN_ENABLED" ] && ${DOXYGEN_ENABLED} ; then
@@ -69,19 +71,18 @@ if python3 detect_ci_matching_branch.py "${GITHUB_HEAD_REF:-${GITHUB_REF#refs/he
   GZDEV_TRY_BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}}
 fi
 
+python3 -m venv "$VENV_ROOT/venv_gzdev"
+. "$VENV_ROOT/venv_gzdev/bin/activate"
 git clone https://github.com/osrf/gzdev /tmp/gzdev
 if [ -n "${GZDEV_TRY_BRANCH}" ]; then
   git -C /tmp/gzdev checkout ${GZDEV_TRY_BRANCH} || true
 fi
-pip3 install -r /tmp/gzdev/requirements.txt --break-system-packages
+pip3 install -r /tmp/gzdev/requirements.txt
 /tmp/gzdev/gzdev.py \
   repository enable --project="${PACKAGE}${PACKAGE_MAJOR_VERSION}"
+deactivate
 
 apt-get update 2>&1
-echo ::endgroup::
-
-echo ::group::Install tools: pip
-pip3 install -U vcstool colcon-common-extensions --break-system-packages
 echo ::endgroup::
 
 if [ -f "$SOURCE_DEPENDENCIES" ] || [ -f "$SOURCE_DEPENDENCIES_VERSIONED" ] ; then
