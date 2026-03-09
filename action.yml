@@ -43,7 +43,7 @@ inputs:
     required: false
     default: 'false'
   gzdev-project-name:
-    description: 'Override the gzdev project name (default: auto-derived from repo name + CMake major version)'
+    description: 'Override the gzdev project name (default: auto-derived from repo name + CMake major version). e.g., This can be set to "rotary" to enable the use the nightlies apt repo.'
     required: false
     default: ''
 runs:
