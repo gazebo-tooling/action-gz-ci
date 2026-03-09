@@ -42,6 +42,10 @@ inputs:
     description: 'Run cppcheck'
     required: false
     default: 'false'
+  gzdev-project-name:
+    description: 'Override the gzdev project name (default: auto-derived from repo name + CMake major version)'
+    required: false
+    default: ''
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -55,3 +59,4 @@ runs:
     - ${{ inputs.tests-enabled }}
     - ${{ inputs.cpplint-enabled }}
     - ${{ inputs.cppcheck-enabled }}
+    - ${{ inputs.gzdev-project-name }}

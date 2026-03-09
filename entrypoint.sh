@@ -12,6 +12,7 @@ DOXYGEN_ENABLED=$6
 TESTS_ENABLED=$7
 CPPLINT_ENABLED=$8
 CPPCHECK_ENABLED=$9
+GZDEV_PROJECT_NAME=${10}
 
 # keep the previous behaviour of running codecov if old token is set
 [ -n "${DEPRECATED_CODECOV_TOKEN}" ] && CODECOV_ENABLED=1
@@ -74,8 +75,13 @@ if [ -n "${GZDEV_TRY_BRANCH}" ]; then
   git -C /tmp/gzdev checkout ${GZDEV_TRY_BRANCH} || true
 fi
 pip3 install -r /tmp/gzdev/requirements.txt --break-system-packages
+if [ -n "${GZDEV_PROJECT_NAME}" ]; then
+  GZDEV_PROJECT="${GZDEV_PROJECT_NAME}"
+else
+  GZDEV_PROJECT="${PACKAGE}${PACKAGE_MAJOR_VERSION}"
+fi
 /tmp/gzdev/gzdev.py \
-  repository enable --project="${PACKAGE}${PACKAGE_MAJOR_VERSION}"
+  repository enable --project="${GZDEV_PROJECT}"
 
 apt-get update 2>&1
 echo ::endgroup::
