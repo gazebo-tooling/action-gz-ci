@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Compile and test
         id: ci
-        uses: gazebo-tooling/ubuntu-ci-action@noble
+        uses: gazebo-tooling/action-gz-ci@noble
         with:
           codecov-enabled: true
           doxygen-enabled: true
