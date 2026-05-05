@@ -32,8 +32,11 @@ apt -y install \
   lcov \
   lsb-release \
   python3-pip \
-  wget
-
+  wget \
+  binutils-dev \
+  libdw-dev \
+  libdwarf-dev
+  
 if [ -n "$DOXYGEN_ENABLED" ] && ${DOXYGEN_ENABLED} ; then
   apt -y install doxygen
 fi
