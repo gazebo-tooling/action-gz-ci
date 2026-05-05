@@ -86,11 +86,18 @@ fi
 apt-get update 2>&1
 echo ::endgroup::
 
-echo ::group::Install tools: pip
-pip3 install -U vcstool colcon-common-extensions --break-system-packages
-echo ::endgroup::
-
 if [ -f "$SOURCE_DEPENDENCIES" ] || [ -f "$SOURCE_DEPENDENCIES_VERSIONED" ] ; then
+  echo ::group::Prepare colcon and vcs for source dependencies
+  # Add colcon repository
+  mkdir -p /etc/apt/keyrings/
+  for tool in colcon vcstool; do
+    curl -fsSL "https://packagecloud.io/dirk-thomas/${tool}/gpgkey" | gpg --dearmor > "/etc/apt/keyrings/${tool}-archive-keyring.gpg"
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/${tool}-archive-keyring.gpg] https://packagecloud.io/dirk-thomas/${tool}/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/${tool}.list > /dev/null
+  done
+  apt update 2>&1
+  apt -y install python3-vcstool \
+                 python3-colcon-common-extensions
+  echo ::endgroup::
   echo ::group::Fetch source dependencies
   mkdir -p deps/src
   if [ -f "$SOURCE_DEPENDENCIES" ] ; then
