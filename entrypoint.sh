@@ -13,6 +13,7 @@ TESTS_ENABLED=$7
 CPPLINT_ENABLED=$8
 CPPCHECK_ENABLED=$9
 GZDEV_PROJECT_NAME=${10}
+FILTER_BUILD_AND_TEST_ENABLED=${11}
 
 # keep the previous behaviour of running codecov if old token is set
 [ -n "${DEPRECATED_CODECOV_TOKEN}" ] && CODECOV_ENABLED=1
@@ -73,6 +74,20 @@ fi
 git clone https://github.com/osrf/gzdev /tmp/gzdev
 if [ -n "${GZDEV_TRY_BRANCH}" ]; then
   git -C /tmp/gzdev checkout ${GZDEV_TRY_BRANCH} || true
+fi
+
+# End early when the pull request changes no file that needs a build or tests
+if [ "${FILTER_BUILD_AND_TEST_ENABLED}" != "false" ]; then
+  filter_build_and_test_rc=0
+  python3 /tmp/gzdev/gzdev.py filter-build-and-test --build-platform=gh-actions \
+    --return-if-none=99 || filter_build_and_test_rc=$?
+  if [ $filter_build_and_test_rc -eq 99 ]; then
+    echo ::endgroup::
+    exit 0
+  fi
+  if [ $filter_build_and_test_rc -ne 0 ]; then
+    echo "::warning title=filter-build-and-test::filter-build-and-test could not decide (rc $filter_build_and_test_rc): running the full CI"
+  fi
 fi
 pip3 install -r /tmp/gzdev/requirements.txt --break-system-packages
 if [ -n "${GZDEV_PROJECT_NAME}" ]; then
