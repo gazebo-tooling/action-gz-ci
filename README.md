@@ -114,3 +114,13 @@ fail if there is code not documented properly.
 ### Tests
 
 Tests will run by default, and can be disabled with `tests-enabled: false`.
+
+### Skipping CI when no build or tests are needed
+
+On pull requests, the action ends early and successfully when every changed
+file matches the ignore patterns of
+[`gzdev filter-build-and-test`](https://github.com/gazebo-tooling/gzdev) (for example
+only `README.md` or Bazel files changed). The run shows a "CI skipped"
+notice and lists the files in the job summary. Branch pushes always build.
+
+Disable it with `filter-build-and-test-enabled: false`.
