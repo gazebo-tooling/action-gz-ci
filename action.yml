@@ -46,6 +46,10 @@ inputs:
     description: 'Override the gzdev project name (default: auto-derived from repo name + CMake major version). e.g., This can be set to "rotary" to enable the use the nightlies apt repo.'
     required: false
     default: ''
+  filter-build-and-test-enabled:
+    description: 'End the job early, without building, when the pull request only changes files that need no build or tests (see gzdev filter-build-and-test)'
+    required: false
+    default: 'true'
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -60,3 +64,4 @@ runs:
     - ${{ inputs.cpplint-enabled }}
     - ${{ inputs.cppcheck-enabled }}
     - ${{ inputs.gzdev-project-name }}
+    - ${{ inputs.filter-build-and-test-enabled }}
